@@ -1,5 +1,8 @@
+# Copyright (c) 2022 Preponderous Software
+# MIT License
 from objects.entity import Entity
 from objects.environment import Environment
+
 
 entity = Entity("Gerald")
 entity.printInfo()

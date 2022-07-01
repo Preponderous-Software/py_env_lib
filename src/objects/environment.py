@@ -4,6 +4,7 @@ import datetime
 import random
 from objects.entity import Entity
 
+
 # @author Daniel McCoy Stephenson
 # @since July 1st, 2022
 class Environment(object):
