@@ -3,6 +3,7 @@
 import datetime
 import random
 from objects.entity import Entity
+from objects.grid import Grid
 
 
 # @author Daniel McCoy Stephenson
@@ -12,42 +13,42 @@ class Environment(object):
     def __init__(self, name):
         self.id = random.randint(0, 100)
         self.name = name
+        self.grid = Grid(self, 2, 2)
         self.creationDate = datetime.datetime.now()
-        self.gridID = random.randint(0, 100)
-        self.entityIDs = []
+        self.entities = []
     
     def getID(self):
         return self.id
-
-    def setID(self, id):
-        self.id = id
     
     def getName(self):
         return self.name
 
-    def setName(self, name):
-        self.name = name
-
     def getCreationDate(self):
         return self.creationDate
 
-    def getGridID(self):
-        return self.gridID
+    def getGrid(self):
+        return self.grid
 
-    def setGridID(self, locationID):
-        self.locationID = locationID
+    def setID(self, id):
+        self.id = id
+
+    def setName(self, name):
+        self.name = name
+
+    def setGrid(self, grid):
+        self.grid = grid
 
     def addEntity(self, entity: Entity):
-        self.entityIDs.append(entity.getID())
+        self.entities.append(entity)
     
     def removeEntity(self, entity: Entity):
-        self.entityIDs.remove(entity.getID())
+        self.entities.remove(entity)
     
     def isEntityPresent(self, entity: Entity):
-        return entity.getID() in self.entityUUIDs
+        return entity.getID() in self.entities
 
     def getNumEntities(self):
-        return len(self.entityIDs)
+        return len(self.entities)
 
     def printInfo(self):
         print("--------------")
@@ -55,6 +56,6 @@ class Environment(object):
         print("--------------")
         print("ID: ", self.getID())
         print("Creation Date: ", self.getCreationDate())
-        print("Grid ID: ", self.getGridID())
+        print("Grid ID: ", self.getGrid().getID())
         print("Num entities: ", self.getNumEntities())
         print("\n")

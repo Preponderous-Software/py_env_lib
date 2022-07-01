@@ -21,8 +21,8 @@ class Entity(object):
     def getName(self):
         return self.name
 
-    def setName(self, name):
-        self.name = name
+    def getEnvironmentID(self):
+        return self.environmentID
 
     def getCreationDate(self):
         return self.creationDate
@@ -30,11 +30,20 @@ class Entity(object):
     def getEnvironmentID(self):
         return self.environmentID
 
-    def setEnvironmentID(self, environmentID):
-        self.environmentID = environmentID
-
     def getLocationID(self):
         return self.locationID
+    
+    def setID(self, id):
+        self.id = id
+
+    def setName(self, name):
+        self.name = name
+
+    def setEnvironmentID(self, environmentID):
+        self.environmentID = environmentID
+    
+    def setCreationDate(self, creationDate):
+        self.creationDate = creationDate
 
     def setLocationID(self, locationID):
         self.locationID = locationID
