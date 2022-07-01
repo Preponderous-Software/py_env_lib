@@ -11,11 +11,10 @@ from objects.grid import Grid
 class Environment(object):
 
     def __init__(self, name):
-        self.id = random.randint(0, 100)
+        self.id = random.randint(0, 100) # TODO: make this unique
         self.name = name
-        self.grid = Grid(self, 2, 2)
+        self.grid = Grid(2, 2, self)
         self.creationDate = datetime.datetime.now()
-        self.entities = []
     
     def getID(self):
         return self.id
@@ -39,23 +38,25 @@ class Environment(object):
         self.grid = grid
 
     def addEntity(self, entity: Entity):
-        self.entities.append(entity)
+        entity.setEnvironmentID(self.getID())
+        self.grid.addEntity(entity)
     
     def removeEntity(self, entity: Entity):
-        self.entities.remove(entity)
+        self.grid.removeEntity(entity)
     
     def isEntityPresent(self, entity: Entity):
-        return entity.getID() in self.entities
+        return self.grid.isEntityPresent(entity)
 
     def getNumEntities(self):
-        return len(self.entities)
+        return self.getGrid().getNumEntities()
 
     def printInfo(self):
         print("--------------")
         print(self.name)
         print("--------------")
-        print("ID: ", self.getID())
-        print("Creation Date: ", self.getCreationDate())
-        print("Grid ID: ", self.getGrid().getID())
         print("Num entities: ", self.getNumEntities())
+        print("Num locations: ", self.getGrid().getSize())
+        print("Creation Date: ", self.getCreationDate())
+        print("ID: ", self.getID())
+        print("Grid ID: ", self.getGrid().getID())
         print("\n")

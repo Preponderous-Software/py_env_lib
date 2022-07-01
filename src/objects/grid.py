@@ -6,15 +6,19 @@
 # @since July 1st, 2022
 import random
 
+from objects.entity import Entity
+from objects.location import Location
+
 
 class Grid(object):
 
     def __init__(self, columns, rows, parentEnvironment):
-        self.id = random.randint(0, 100)
+        self.id = random.randint(0, 100) # TODO: make this unique
         self.columns = columns
         self.rows = rows
         self.parentEnvironment = parentEnvironment
-        self.locationIDs = []
+        self.locations = []
+        self.generateLocations()
 
     def getID(self):
         return self.id
@@ -28,11 +32,23 @@ class Grid(object):
     def getParentEnvironment(self):
         return self.parentEnvironment
 
-    def getLocationIDs(self):
-        return self.locationIDs
+    def getLocations(self):
+        return self.locations
 
-    def getFirstLocationID(self):
-        return self.locationIDs.pop()
+    def getFirstLocation(self):
+        return self.locations[0]
+
+    def getSize(self):
+        return len(self.locations)
+    
+    def getLocations(self):
+        return self.locations
+    
+    def getNumEntities(self):
+        count = 0
+        for location in self.locations:
+            count += location.getNumEntities()
+        return count
     
     def setID(self, id):
         self.id = id
@@ -46,14 +62,32 @@ class Grid(object):
     def setParentEnvironment(self, parentEnvironment):
         self.parentEnvironment = parentEnvironment
     
-    def setLocationIDs(self, locationIDs):
-        self.locationIDs = locationIDs
+    def setLocations(self, locations):
+        self.locations = locations
     
-    def addLocationID(self, locationID):
-        self.locationsIDs.append(locationID)
+    def addLocation(self, location):
+        self.locationss.append(location)
     
-    def removeLocationID(self, locationID):
-        self.locationIDs.remove(locationID)
+    def removeLocation(self, location):
+        self.locations.remove(location)
+    
+    def addEntity(self, entity: Entity):
+        self.getFirstLocation().addEntity(entity)
+        entity.setGridID(self.getID())
+    
+    def removeEntity(self, entity: Entity):
+        for location in self.grid.getLocations():
+            if location.isEntityPresent(entity):
+                location.removeEntity(entity)
+                return
+    
+    def isEntityPresent(self, entity: Entity):
+        for location in self.grid.getLocations():
+            if location.isEntityPresent(entity):
+                return True
 
-    def toString(self):
-        pass # TODO: implement
+    def generateLocations(self):
+        for x in range(self.getColumns()):
+            for y in range(self.getRows()):
+                location = Location(x, y, self)
+                self.locations.append(location)

@@ -9,11 +9,12 @@ import random
 class Entity(object):
 
     def __init__(self, name):
-        self.id = random.randint(0, 999)
+        self.id = random.randint(0, 999) # TODO: make this unique
         self.name = name
         self.creationDate = datetime.datetime.now()
-        self.environmentID = random.randint(0, 999)
-        self.locationID = random.randint(0, 999)
+        self.environmentID = -1
+        self.gridID = -1
+        self.locationID = -1
     
     def getID(self):
         return self.id
@@ -30,6 +31,9 @@ class Entity(object):
     def getEnvironmentID(self):
         return self.environmentID
 
+    def getGridID(self):
+        return self.gridID
+
     def getLocationID(self):
         return self.locationID
     
@@ -45,6 +49,9 @@ class Entity(object):
     def setCreationDate(self, creationDate):
         self.creationDate = creationDate
 
+    def setGridID(self, gridID):
+        self.gridID = gridID
+
     def setLocationID(self, locationID):
         self.locationID = locationID
     
@@ -55,5 +62,6 @@ class Entity(object):
         print("ID: ", self.getID())
         print("Creation Date: ", self.getCreationDate())
         print("Environment ID: ", self.getEnvironmentID())
+        print("Grid ID: ", self.getGridID())
         print("Location ID: ", self.getLocationID())
         print("\n")

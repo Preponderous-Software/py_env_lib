@@ -4,9 +4,20 @@ from objects.entity import Entity
 from objects.environment import Environment
 
 
-entity = Entity("Gerald")
-entity.printInfo()
+# create environment
+environment = Environment("My World")
+print("Created environment.")
 
-environment = Environment("test")
+# create entity
+entity = Entity("Gerald")
+print("Created entity.")
+
+# place entity
 environment.addEntity(entity)
-environment.printInfo()
+print("Placed entity into environment.")
+
+# check for expected behavior
+assert(environment.getNumEntities() == 1)
+assert(entity.getEnvironmentID() == environment.getID())
+assert(entity.getGridID() == environment.getGrid().getID())
+assert(entity.getLocationID() == environment.getGrid().getFirstLocation().getID())

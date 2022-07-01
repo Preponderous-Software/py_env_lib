@@ -4,9 +4,28 @@
 
 # @author Daniel McCoy Stephenson
 # @since July 1st, 2022
+import datetime
+
+
 class TimeSlot(object):
 
-    def __init__(self):
+    def __init__(self, milliseconds):
+        self.timestamp = datetime.datetime.now()
+        self.milliseconds = milliseconds
         pass
 
-    # TODO: implement
+    def getTimestamp(self):
+        return self.timestamp
+    
+    def getMilliseconds(self):
+        return self.milliseconds
+    
+    def setTimestamp(self, timestamp):
+        self.timestamp = timestamp
+    
+    def setMilliseconds(self, milliseconds):
+        self.milliseconds = milliseconds
+
+    def isActive(self):
+        # TODO: implement
+        pass
