@@ -11,7 +11,7 @@ from grid import Grid
 class Environment(object):
 
     def __init__(self, name):
-        self.id = random.randint(0, 100) # TODO: make this unique
+        self.id = random.randint(0, 999) # TODO: make this unique
         self.name = name
         self.grid = Grid(2, 2, self)
         self.creationDate = datetime.datetime.now()

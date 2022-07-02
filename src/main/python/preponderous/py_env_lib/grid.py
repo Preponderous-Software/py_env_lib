@@ -13,7 +13,7 @@ from location import Location
 class Grid(object):
 
     def __init__(self, columns, rows, parentEnvironment):
-        self.id = random.randint(0, 100) # TODO: make this unique
+        self.id = random.randint(0, 999) # TODO: make this unique
         self.columns = columns
         self.rows = rows
         self.parentEnvironment = parentEnvironment
