@@ -27,5 +27,4 @@ class TimeSlot(object):
         self.milliseconds = milliseconds
 
     def isActive(self):
-        # TODO: implement
-        pass
+        return datetime.datetime.now() < self.timestamp + self.milliseconds
