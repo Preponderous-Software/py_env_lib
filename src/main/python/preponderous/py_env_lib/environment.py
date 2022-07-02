@@ -2,8 +2,8 @@
 # MIT License
 import datetime
 import random
-from objects.entity import Entity
-from objects.grid import Grid
+from entity import Entity
+from grid import Grid
 
 
 # @author Daniel McCoy Stephenson

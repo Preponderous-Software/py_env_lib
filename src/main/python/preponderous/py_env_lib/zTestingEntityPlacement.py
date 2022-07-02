@@ -1,7 +1,7 @@
 # Copyright (c) 2022 Preponderous Software
 # MIT License
-from objects.entity import Entity
-from objects.environment import Environment
+from entity import Entity
+from environment import Environment
 
 
 # create environment

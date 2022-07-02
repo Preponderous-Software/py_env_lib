@@ -1,1 +1,1 @@
-python3 ./src/testing.py
+python3 ./src/main/python/preponderous/py_env_lib/zTestingEntityPlacement.py

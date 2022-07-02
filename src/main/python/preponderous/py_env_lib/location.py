@@ -7,7 +7,7 @@
 import random
 from re import X
 
-from objects.entity import Entity
+from entity import Entity
 
 
 class Location(object):

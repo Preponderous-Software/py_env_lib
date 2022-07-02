@@ -6,8 +6,8 @@
 # @since July 1st, 2022
 import random
 
-from objects.entity import Entity
-from objects.location import Location
+from entity import Entity
+from location import Location
 
 
 class Grid(object):
