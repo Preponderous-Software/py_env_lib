@@ -4,8 +4,8 @@
 
 # @author Daniel McCoy Stephenson
 # @since July 1st, 2022
-import random
 from re import X
+import uuid
 
 from entity import Entity
 
@@ -13,7 +13,7 @@ from entity import Entity
 class Location(object):
 
     def __init__(self, x, y, parentGrid):
-        self.id = random.randint(0, 999) # TODO: make this unique
+        self.id = uuid.uuid4()
         self.x = x
         self.y = y
         self.parentGrid = parentGrid
@@ -35,11 +35,17 @@ class Location(object):
         return len(self.entities)
     
     def addEntity(self, entity: Entity):
-        self.entities.append(entity)
-        entity.setLocationID(self.getID())
+        if not self.isEntityPresent(entity):
+            self.entities.append(entity)
+            entity.setLocationID(self.getID())
+        else:
+            print("Warning: An entity was already present when attempting to add it to a location.")
     
     def removeEntity(self, entity: Entity):
-        self.entities.remove(entity)
+        if self.isEntityPresent(entity):
+            self.entities.remove(entity)
+        else:
+            print("Warning: An entity was not present when attempting to remove it from a location.")
     
     def isEntityPresent(self, entity: Entity):
         return entity in self.entities

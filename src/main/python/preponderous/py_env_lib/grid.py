@@ -5,6 +5,7 @@
 # @author Daniel McCoy Stephenson
 # @since July 1st, 2022
 import random
+import uuid
 
 from entity import Entity
 from location import Location
@@ -13,7 +14,7 @@ from location import Location
 class Grid(object):
 
     def __init__(self, columns, rows, parentEnvironment):
-        self.id = random.randint(0, 999) # TODO: make this unique
+        self.id = uuid.uuid4()
         self.columns = columns
         self.rows = rows
         self.parentEnvironment = parentEnvironment
@@ -72,7 +73,7 @@ class Grid(object):
         self.locations.remove(location)
     
     def addEntity(self, entity: Entity):
-        self.getFirstLocation().addEntity(entity)
+        self.getRandomLocation().addEntity(entity)
         entity.setGridID(self.getID())
     
     def removeEntity(self, entity: Entity):
@@ -91,3 +92,31 @@ class Grid(object):
             for y in range(self.getRows()):
                 location = Location(x, y, self)
                 self.locations.append(location)
+    
+    def getLocation(self, id):
+        for location in self.locations:
+            if location.getID() == id:
+                return location
+        return -1
+    
+    def getRandomLocation(self):
+        index = random.randrange(0, len(self.locations))
+        return self.locations[index]
+    
+    def getLocationByCoordinates(self, x, y):
+        for location in self.locations:
+            if location.getX() == x and location.getY() == y:
+                return location
+        return -1
+
+    def getUp(self, location):
+        return self.getLocationByCoordinates(location.getX(), location.getY() - 1)
+    
+    def getRight(self, location):
+        return self.getLocationByCoordinates(location.getX() + 1, location.getY())
+    
+    def getDown(self, location):
+        return self.getLocationByCoordinates(location.getX(), location.getY() + 1)
+    
+    def getLeft(self, location):
+        return self.getLocationByCoordinates(location.getX() - 1, location.getY())

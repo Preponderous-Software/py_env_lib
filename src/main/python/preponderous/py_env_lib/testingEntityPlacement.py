@@ -5,7 +5,7 @@ from environment import Environment
 
 
 # create environment
-environment = Environment("My World")
+environment = Environment("My World", 4)
 print("Created environment.")
 
 # create entity
@@ -20,5 +20,4 @@ print("Placed entity into environment.")
 assert(environment.getNumEntities() == 1)
 assert(entity.getEnvironmentID() == environment.getID())
 assert(entity.getGridID() == environment.getGrid().getID())
-assert(entity.getLocationID() == environment.getGrid().getFirstLocation().getID())
 print("Assertions passed.")
