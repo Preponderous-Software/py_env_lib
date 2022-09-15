@@ -2,8 +2,8 @@
 # MIT License
 import random
 import uuid
-from entity import Entity
-from location import Location
+from src.entity import Entity
+from src.location import Location
 
 
 # @author Daniel McCoy Stephenson
