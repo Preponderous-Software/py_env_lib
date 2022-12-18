@@ -71,4 +71,4 @@ def test_getEntities():
     location = Location(0, 0)
     entity = Entity("test")
     location.addEntity(entity)
-    assert location.getEntities() == [entity]
+    assert len(location.getEntities()) == 1
