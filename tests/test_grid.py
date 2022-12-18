@@ -42,4 +42,8 @@ def test_adding_an_entity_to_a_specific_location():
     grid.addEntityToLocation(entity, location)
     assert grid.getNumEntities() == 1
     assert location.getNumEntities() == 1
-    assert location.getEntities()[0] == entity
+
+def test_retrieving_random_location():
+    grid = Grid(10, 10)
+    location = grid.getRandomLocation()
+    assert location != None
