@@ -114,7 +114,8 @@ class Grid(object):
     # Returns a random location.
     def getRandomLocation(self):
         index = random.randrange(0, len(self.locations))
-        return self.locations[index]
+        id = list(self.locations.keys())[index]
+        return self.locations[id]
     
     # Returns a location at the specified coordinates.
     def getLocationByCoordinates(self, x, y):
