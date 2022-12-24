@@ -29,3 +29,14 @@ def test_setters():
     assert environment.getName() == "test2"
     environment.setGrid(Grid(10, 10))
     assert environment.getGrid() != None
+
+def test_getting_entity_by_id():
+    environment = Environment("test", 10)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    assert environment.getEntity(entity.getID()) == entity
+
+def test_getting_entity_by_id_not_present():
+    environment = Environment("test", 10)
+    entity = Entity("test")
+    assert environment.getEntity(entity.getID()) == None
