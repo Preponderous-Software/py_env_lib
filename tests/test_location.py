@@ -72,3 +72,16 @@ def test_getEntities():
     entity = Entity("test")
     location.addEntity(entity)
     assert len(location.getEntities()) == 1
+
+def test_getEntityById():
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    retrievedEntity = location.getEntity(entity.getID())
+    assert retrievedEntity == entity
+
+def test_getEntityById_not_present():
+    location = Location(0, 0)
+    entity = Entity("test")
+    retrievedEntity = location.getEntity(entity.getID())
+    assert retrievedEntity == None

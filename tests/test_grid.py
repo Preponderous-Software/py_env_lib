@@ -47,3 +47,14 @@ def test_retrieving_random_location():
     grid = Grid(10, 10)
     location = grid.getRandomLocation()
     assert location != None
+
+def test_retrieving_entity_by_id():
+    grid = Grid(10, 10)
+    entity = Entity("test")
+    grid.addEntity(entity)
+    assert grid.getEntity(entity.getID()) == entity
+
+def test_retrieving_entity_by_id_not_present():
+    grid = Grid(10, 10)
+    entity = Entity("test")
+    assert grid.getEntity(entity.getID()) == None
