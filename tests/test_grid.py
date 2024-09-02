@@ -12,6 +12,14 @@ def test_initialization():
     assert grid.locations != None
     assert grid.getSize() == 100
 
+def test_initialization_large():
+    grid = Grid(100, 100)
+    assert grid.id != None
+    assert grid.columns == 100
+    assert grid.rows == 100
+    assert grid.locations != None
+    assert grid.getSize() == 10000
+
 # test getters
 def test_getters():    
     grid = Grid(10, 10)
@@ -32,7 +40,7 @@ def test_setters():
     assert grid.getRows() == 5
     grid.setLocations([])
     assert grid.getLocations() == []
-    
+
 # def adding an entity to a specific location
 def test_adding_an_entity_to_a_specific_location():
     grid = Grid(10, 10)
@@ -58,3 +66,29 @@ def test_retrieving_entity_by_id_not_present():
     grid = Grid(10, 10)
     entity = Entity("test")
     assert grid.getEntity(entity.getID()) == None
+
+def test_adding_an_entity_to_random_location_in_large_grid():
+    # prepare
+    grid = Grid(100, 100)
+    entity = Entity("test")
+    location = grid.getRandomLocation()
+
+    # execute
+    grid.addEntityToLocation(entity, location)
+
+    # verify
+    assert grid.getNumEntities() == 1
+    assert location.getNumEntities() == 1
+
+def test_retrieving_entity_by_id_in_large_grid():
+    # prepare
+    grid = Grid(100, 100)
+    entity = Entity("test")
+    location = grid.getRandomLocation()
+    grid.addEntityToLocation(entity, location)
+
+    # execute
+    retrievedEntity = grid.getEntity(entity.getID())
+
+    # verify
+    assert entity == retrievedEntity

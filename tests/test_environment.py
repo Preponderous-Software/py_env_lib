@@ -12,6 +12,13 @@ def test_initialization():
     assert environment.grid != None
     assert environment.creationDate != None
 
+def test_initializing_large_environment():
+    environment = Environment("large test", 1000)
+    assert environment.id != None
+    assert environment.name == "large test"
+    assert environment.grid != None
+    assert environment.creationDate != None
+
 # test getters
 def test_getters():
     environment = Environment("test", 10)
