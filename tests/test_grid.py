@@ -95,3 +95,31 @@ def test_retrieving_entity_by_id_in_large_grid():
 
     # verify
     assert entity == retrievedEntity
+
+def test_getLocationByCoordinates():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    targetX = NORMAL_SIZE / 2
+    targetY = NORMAL_SIZE / 2
+
+    # execute
+    retrievedLocation = grid.getLocationByCoordinates(targetX, targetY)
+
+    # verify
+    assert retrievedLocation != None
+    assert retrievedLocation.getX() == targetX
+    assert retrievedLocation.getY() == targetY
+
+def test_getLocationByCoordinates_LargeGrid():
+    # prepare
+    grid = Grid(LARGE_SIZE, LARGE_SIZE)
+    targetX = NORMAL_SIZE / 2
+    targetY = NORMAL_SIZE / 2
+
+    # execute
+    retrievedLocation = grid.getLocationByCoordinates(targetX, targetY)
+
+    # verify
+    assert retrievedLocation != None
+    assert retrievedLocation.getX() == targetX
+    assert retrievedLocation.getY() == targetY
