@@ -123,3 +123,16 @@ def test_getLocationByCoordinates_LargeGrid():
     assert retrievedLocation != None
     assert retrievedLocation.getX() == targetX
     assert retrievedLocation.getY() == targetY
+
+def test_isEntityPresent():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = grid.getRandomLocation()
+    grid.addEntityToLocation(entity, location)
+
+    # execute
+    isPresent = grid.isEntityPresent(entity)
+
+    # verify
+    assert isPresent == True
