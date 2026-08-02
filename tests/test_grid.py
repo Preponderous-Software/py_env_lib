@@ -136,3 +136,38 @@ def test_isEntityPresent():
 
     # verify
     assert isPresent == True
+
+def test_isEntityPresent_not_present():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+
+    # execute
+    isPresent = grid.isEntityPresent(entity)
+
+    # verify
+    assert isPresent == False
+
+def test_getFirstLocation():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    location = grid.getFirstLocation()
+
+    # verify
+    assert location != None
+    assert location.getID() in grid.getLocations()
+
+def test_removeLocation():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getRandomLocation()
+    sizeBefore = grid.getSize()
+
+    # execute
+    grid.removeLocation(location)
+
+    # verify
+    assert grid.getSize() == sizeBefore - 1
+    assert location.getID() not in grid.getLocations()
