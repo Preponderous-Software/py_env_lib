@@ -171,3 +171,185 @@ def test_removeLocation():
     # verify
     assert grid.getSize() == sizeBefore - 1
     assert location.getID() not in grid.getLocations()
+
+def test_addLocation():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = Location(NORMAL_SIZE, NORMAL_SIZE)
+    sizeBefore = grid.getSize()
+
+    # execute
+    grid.addLocation(location)
+
+    # verify
+    assert grid.getSize() == sizeBefore + 1
+    assert location.getID() in grid.getLocations()
+
+def test_getLocation():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getRandomLocation()
+
+    # execute
+    retrievedLocation = grid.getLocation(location.getID())
+
+    # verify
+    assert retrievedLocation == location
+
+def test_grid_removeEntity():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = grid.getRandomLocation()
+    grid.addEntityToLocation(entity, location)
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert grid.isEntityPresent(entity) == False
+    assert location.getNumEntities() == 0
+
+def test_grid_removeEntity_not_present():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert grid.isEntityPresent(entity) == False
+
+# test navigating the grid
+def test_getUp():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(1, 1)
+
+    # execute
+    up = grid.getUp(location)
+
+    # verify
+    assert up.getX() == 1
+    assert up.getY() == 0
+
+def test_getUp_at_top_edge():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(0, 0)
+
+    # execute
+    up = grid.getUp(location)
+
+    # verify
+    assert up == -1
+
+def test_getUp_invalid_location():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    up = grid.getUp(-1)
+
+    # verify
+    assert up == -1
+
+def test_getDown():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(1, 1)
+
+    # execute
+    down = grid.getDown(location)
+
+    # verify
+    assert down.getX() == 1
+    assert down.getY() == 2
+
+def test_getDown_at_bottom_edge():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(0, NORMAL_SIZE - 1)
+
+    # execute
+    down = grid.getDown(location)
+
+    # verify
+    assert down == -1
+
+def test_getDown_invalid_location():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    down = grid.getDown(-1)
+
+    # verify
+    assert down == -1
+
+def test_getLeft():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(1, 1)
+
+    # execute
+    left = grid.getLeft(location)
+
+    # verify
+    assert left.getX() == 0
+    assert left.getY() == 1
+
+def test_getLeft_at_left_edge():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(0, 0)
+
+    # execute
+    left = grid.getLeft(location)
+
+    # verify
+    assert left == -1
+
+def test_getLeft_invalid_location():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    left = grid.getLeft(-1)
+
+    # verify
+    assert left == -1
+
+def test_getRight():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(1, 1)
+
+    # execute
+    right = grid.getRight(location)
+
+    # verify
+    assert right.getX() == 2
+    assert right.getY() == 1
+
+def test_getRight_at_right_edge():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(NORMAL_SIZE - 1, 0)
+
+    # execute
+    right = grid.getRight(location)
+
+    # verify
+    assert right == -1
+
+def test_getRight_invalid_location():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    right = grid.getRight(-1)
+
+    # verify
+    assert right == -1
