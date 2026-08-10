@@ -70,6 +70,33 @@ def test_retrieving_entity_by_id_not_present():
     entity = Entity("test")
     assert grid.getEntity(entity.getID()) == None
 
+def test_retrieving_entity_by_id_not_present_is_silent(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    # execute
+    retrievedEntity = grid.getEntity(entity.getID())
+
+    # verify
+    assert retrievedEntity == None
+    assert capsys.readouterr().out == ""
+
+def test_retrieving_entity_by_id_is_silent(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntity(entity)
+    capsys.readouterr()
+
+    # execute
+    retrievedEntity = grid.getEntity(entity.getID())
+
+    # verify
+    assert retrievedEntity == entity
+    assert capsys.readouterr().out == ""
+
 def test_adding_an_entity_to_random_location_in_large_grid():
     # prepare
     grid = Grid(LARGE_SIZE, LARGE_SIZE)
