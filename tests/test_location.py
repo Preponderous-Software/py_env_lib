@@ -73,7 +73,6 @@ def test_isEntityPresent_not_present():
     entity = Entity("test")
     assert location.isEntityPresent(entity) == False
 
-
 # test getting entities
 def test_getEntities(monkeypatch):
     monkeypatch.setattr(Location, "isEntityPresent", MagicMock(return_value=False))
