@@ -22,9 +22,11 @@ def test_getNumEntities():
     assert location.getNumEntities() == 0
 
 # test adding entity
-def test_addEntity():
-    Location.isEntityPresent = MagicMock(return_value=False)
-    Entity.setLocationID = MagicMock()
+def test_addEntity(monkeypatch):
+    isEntityPresent = MagicMock(return_value=False)
+    setLocationID = MagicMock()
+    monkeypatch.setattr(Location, "isEntityPresent", isEntityPresent)
+    monkeypatch.setattr(Entity, "setLocationID", setLocationID)
 
     location = Location(0, 0)
     entity = Entity("test")
@@ -32,42 +34,51 @@ def test_addEntity():
     assert location.getNumEntities() == 1
 
     # test that isEntityPresent was called
-    Location.isEntityPresent.assert_called_once_with(entity)
+    isEntityPresent.assert_called_once_with(entity)
 
     # test that setLocationID was called
-    Entity.setLocationID.assert_called_once_with(location.getID())
+    setLocationID.assert_called_once_with(location.getID())
 
 # test removing entity
-def test_removeEntity():
-    Location.isEntityPresent = MagicMock(return_value=False)
-    Entity.setLocationID = MagicMock()
+def test_removeEntity(monkeypatch):
+    setLocationID = MagicMock()
+    monkeypatch.setattr(Location, "isEntityPresent", MagicMock(return_value=False))
+    monkeypatch.setattr(Entity, "setLocationID", setLocationID)
 
     location = Location(0, 0)
     entity = Entity("test")
     location.addEntity(entity)
-    
-    Location.isEntityPresent = MagicMock(return_value=True)
+
+    isEntityPresent = MagicMock(return_value=True)
+    monkeypatch.setattr(Location, "isEntityPresent", isEntityPresent)
     location.removeEntity(entity)
     assert location.getNumEntities() == 0
 
     # test that isEntityPresent was called
-    Location.isEntityPresent.assert_called_once_with(entity)
+    isEntityPresent.assert_called_once_with(entity)
 
     # test that setLocationID was called
-    Entity.setLocationID.assert_called()
+    setLocationID.assert_called()
 
 # test checking if entity is present
 def test_isEntityPresent():
     location = Location(0, 0)
     entity = Entity("test")
     location.addEntity(entity)
+    assert location.getNumEntities() == 1
     assert location.isEntityPresent(entity) == True
-    
+
+def test_isEntityPresent_not_present():
+    location = Location(0, 0)
+    entity = Entity("test")
+    assert location.isEntityPresent(entity) == False
+
+
 # test getting entities
-def test_getEntities():
-    Location.isEntityPresent = MagicMock(return_value=False)
-    Entity.setLocationID = MagicMock()
-    
+def test_getEntities(monkeypatch):
+    monkeypatch.setattr(Location, "isEntityPresent", MagicMock(return_value=False))
+    monkeypatch.setattr(Entity, "setLocationID", MagicMock())
+
     location = Location(0, 0)
     entity = Entity("test")
     location.addEntity(entity)
