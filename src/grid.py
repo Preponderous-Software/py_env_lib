@@ -154,7 +154,6 @@ class Grid(object):
     def getEntity(self, id):
         for locationId in self.locations:
             location = self.locations[locationId]
-            entity = location.getEntity(id)
-            if entity != None:
-                return entity
+            if id in location.getEntities():
+                return location.getEntity(id)
         return None
