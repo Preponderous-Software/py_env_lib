@@ -39,10 +39,11 @@ class Location(object):
         else:
             print("Warning: An entity was already present when attempting to add it to a location.")
     
-    # Removes an entity from this location.
+    # Removes an entity from this location and clears the entity's location ID.
     def removeEntity(self, entity: Entity):
         if self.isEntityPresent(entity):
             del self.entities[entity.getID()]
+            entity.setLocationID(-1)
         else:
             print("Warning: An entity was not present when attempting to remove it from a location.")
     

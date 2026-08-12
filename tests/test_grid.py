@@ -248,6 +248,37 @@ def test_grid_removeEntity_not_present():
     # verify
     assert grid.isEntityPresent(entity) == False
 
+def test_grid_removeEntity_clears_containment_ids():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = grid.getRandomLocation()
+    grid.addEntityToLocation(entity, location)
+    assert entity.getGridID() == grid.getID()
+    assert entity.getLocationID() == location.getID()
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
+def test_grid_removeEntity_not_present_preserves_containment_ids():
+    # prepare
+    occupiedGrid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    otherGrid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = occupiedGrid.getRandomLocation()
+    occupiedGrid.addEntityToLocation(entity, location)
+
+    # execute
+    otherGrid.removeEntity(entity)
+
+    # verify
+    assert entity.getGridID() == occupiedGrid.getID()
+    assert entity.getLocationID() == location.getID()
+
 # test navigating the grid
 def test_getUp():
     # prepare
