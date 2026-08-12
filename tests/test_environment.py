@@ -40,6 +40,30 @@ def test_setters():
     environment.setGrid(Grid(NORMAL_SIZE, NORMAL_SIZE))
     assert environment.getGrid() != None
 
+# test removing entities
+def test_removeEntity_clears_containment_ids():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    assert entity.getEnvironmentID() == environment.getID()
+
+    environment.removeEntity(entity)
+    assert environment.isEntityPresent(entity) == False
+    assert entity.getEnvironmentID() == -1
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
+def test_removeEntity_not_present_preserves_containment_ids():
+    occupiedEnvironment = Environment("test", NORMAL_SIZE)
+    otherEnvironment = Environment("other test", NORMAL_SIZE)
+    entity = Entity("test")
+    occupiedEnvironment.addEntity(entity)
+
+    otherEnvironment.removeEntity(entity)
+    assert occupiedEnvironment.isEntityPresent(entity) == True
+    assert entity.getEnvironmentID() == occupiedEnvironment.getID()
+    assert entity.getGridID() == occupiedEnvironment.getGrid().getID()
+
 def test_getting_entity_by_id():
     environment = Environment("test", NORMAL_SIZE)
     entity = Entity("test")

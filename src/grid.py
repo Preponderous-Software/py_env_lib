@@ -85,12 +85,13 @@ class Grid(object):
         
         self.locations[location.getID()].addEntity(entity)
     
-    # Removes an entity from this grid.
+    # Removes an entity from this grid and clears the entity's grid ID.
     def removeEntity(self, entity: Entity):
         for locationId in self.getLocations():
             location = self.locations[locationId]
             if location.isEntityPresent(entity):
                 location.removeEntity(entity)
+                entity.setGridID(-1)
                 return
     
     # Checks if an entity is present in this grid.

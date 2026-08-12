@@ -60,6 +60,24 @@ def test_removeEntity(monkeypatch):
     # test that setLocationID was called
     setLocationID.assert_called()
 
+def test_removeEntity_clears_location_id():
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    assert entity.getLocationID() == location.getID()
+
+    location.removeEntity(entity)
+    assert entity.getLocationID() == -1
+
+def test_removeEntity_not_present_preserves_location_id():
+    occupiedLocation = Location(0, 0)
+    otherLocation = Location(1, 1)
+    entity = Entity("test")
+    occupiedLocation.addEntity(entity)
+
+    otherLocation.removeEntity(entity)
+    assert entity.getLocationID() == occupiedLocation.getID()
+
 # test checking if entity is present
 def test_isEntityPresent():
     location = Location(0, 0)
