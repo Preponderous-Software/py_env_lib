@@ -199,6 +199,43 @@ def test_removeLocation():
     assert grid.getSize() == sizeBefore - 1
     assert location.getID() not in grid.getLocations()
 
+def test_removeLocation_not_present():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = Location(NORMAL_SIZE, NORMAL_SIZE)
+    sizeBefore = grid.getSize()
+
+    # execute
+    grid.removeLocation(location)
+
+    # verify
+    assert grid.getSize() == sizeBefore
+    assert location.getID() not in grid.getLocations()
+
+def test_removeLocation_not_present_warns(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = Location(NORMAL_SIZE, NORMAL_SIZE)
+    capsys.readouterr()
+
+    # execute
+    grid.removeLocation(location)
+
+    # verify
+    assert capsys.readouterr().out == "Warning: A location was not present when attempting to remove it from a grid.\n"
+
+def test_removeLocation_is_silent(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getRandomLocation()
+    capsys.readouterr()
+
+    # execute
+    grid.removeLocation(location)
+
+    # verify
+    assert capsys.readouterr().out == ""
+
 def test_addLocation():
     # prepare
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
@@ -261,6 +298,24 @@ def test_grid_removeEntity_clears_containment_ids():
     grid.removeEntity(entity)
 
     # verify
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
+def test_grid_removeEntity_removes_every_occurrence():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    locations = list(grid.getLocations().values())
+    grid.addEntityToLocation(entity, locations[0])
+    grid.addEntityToLocation(entity, locations[1])
+    assert grid.getNumEntities() == 2
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert grid.isEntityPresent(entity) == False
+    assert grid.getNumEntities() == 0
     assert entity.getGridID() == -1
     assert entity.getLocationID() == -1
 

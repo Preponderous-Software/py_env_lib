@@ -72,6 +72,9 @@ class Grid(object):
     
     # Removes a location from this grid.
     def removeLocation(self, location: Location):
+        if location.getID() not in self.locations:
+            print("Warning: A location was not present when attempting to remove it from a grid.")
+            return
         del self.locations[location.getID()]
     
     # Adds an entity to a random location in this grid.
@@ -85,14 +88,16 @@ class Grid(object):
         
         self.locations[location.getID()].addEntity(entity)
     
-    # Removes an entity from this grid and clears the entity's grid ID.
+    # Removes an entity from every location of this grid and clears the entity's grid ID.
     def removeEntity(self, entity: Entity):
+        removed = False
         for locationId in self.getLocations():
             location = self.locations[locationId]
             if location.isEntityPresent(entity):
                 location.removeEntity(entity)
-                entity.setGridID(-1)
-                return
+                removed = True
+        if removed:
+            entity.setGridID(-1)
     
     # Checks if an entity is present in this grid.
     def isEntityPresent(self, entity: Entity):
