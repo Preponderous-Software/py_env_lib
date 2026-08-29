@@ -77,7 +77,7 @@ class Grid(object):
             return
         del self.locations[location.getID()]
     
-    # Adds an entity to a random location in this grid.
+    # Adds an entity to a random location in this grid, unless this grid has no locations.
     def addEntity(self, entity: Entity):
         if len(self.locations) == 0:
             print("Warning: A grid had no locations when attempting to add an entity to it.")
@@ -85,7 +85,7 @@ class Grid(object):
         entity.setGridID(self.getID())
         self.getRandomLocation().addEntity(entity)
     
-    # Adds an entity to a specified location in this grid.
+    # Adds an entity to a specified location in this grid, unless that location is not in this grid.
     def addEntityToLocation(self, entity: Entity, location):
         if location.getID() not in self.locations:
             print("Warning: A location was not present when attempting to add an entity to it in a grid.")
