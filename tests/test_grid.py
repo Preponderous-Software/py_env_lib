@@ -54,10 +54,137 @@ def test_adding_an_entity_to_a_specific_location():
     assert grid.getNumEntities() == 1
     assert location.getNumEntities() == 1
 
+def test_adding_an_entity_to_a_location_not_in_the_grid():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = Location(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    grid.addEntityToLocation(entity, location)
+
+    # verify
+    assert grid.getNumEntities() == 0
+    assert location.getNumEntities() == 0
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
+def test_adding_an_entity_to_a_location_not_in_the_grid_warns(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = Location(NORMAL_SIZE, NORMAL_SIZE)
+    capsys.readouterr()
+
+    # execute
+    grid.addEntityToLocation(entity, location)
+
+    # verify
+    assert capsys.readouterr().out == "Warning: A location was not present when attempting to add an entity to it in a grid.\n"
+
+def test_adding_an_entity_to_a_specific_location_is_silent(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = grid.getRandomLocation()
+    capsys.readouterr()
+
+    # execute
+    grid.addEntityToLocation(entity, location)
+
+    # verify
+    assert capsys.readouterr().out == ""
+    assert entity.getGridID() == grid.getID()
+
+def test_adding_an_entity_to_a_grid_with_no_locations():
+    # prepare
+    grid = Grid(0, 0)
+    entity = Entity("test")
+
+    # execute
+    grid.addEntity(entity)
+
+    # verify
+    assert grid.getNumEntities() == 0
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
+def test_adding_an_entity_to_a_grid_with_no_locations_warns(capsys):
+    # prepare
+    grid = Grid(0, 0)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    # execute
+    grid.addEntity(entity)
+
+    # verify
+    assert capsys.readouterr().out == "Warning: A grid had no locations when attempting to add an entity to it.\n"
+
+def test_adding_an_entity_to_a_grid_whose_locations_were_all_removed():
+    # prepare
+    grid = Grid(1, 1)
+    entity = Entity("test")
+    grid.removeLocation(grid.getFirstLocation())
+
+    # execute
+    grid.addEntity(entity)
+
+    # verify
+    assert grid.getSize() == 0
+    assert grid.getNumEntities() == 0
+    assert entity.getGridID() == -1
+
+def test_adding_an_entity_to_a_random_location_is_silent(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    # execute
+    grid.addEntity(entity)
+
+    # verify
+    assert capsys.readouterr().out == ""
+    assert grid.getNumEntities() == 1
+
 def test_retrieving_random_location():
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
     location = grid.getRandomLocation()
     assert location != None
+
+def test_retrieving_random_location_from_a_grid_with_no_locations():
+    # prepare
+    grid = Grid(0, 0)
+
+    # execute
+    location = grid.getRandomLocation()
+
+    # verify
+    assert location == None
+
+def test_retrieving_random_location_from_a_grid_with_no_locations_warns(capsys):
+    # prepare
+    grid = Grid(0, 0)
+    capsys.readouterr()
+
+    # execute
+    grid.getRandomLocation()
+
+    # verify
+    assert capsys.readouterr().out == "Warning: A grid had no locations when attempting to retrieve a random location from it.\n"
+
+def test_retrieving_random_location_is_silent(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    capsys.readouterr()
+
+    # execute
+    location = grid.getRandomLocation()
+
+    # verify
+    assert location != None
+    assert capsys.readouterr().out == ""
 
 def test_retrieving_entity_by_id():
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
@@ -259,6 +386,42 @@ def test_getLocation():
 
     # verify
     assert retrievedLocation == location
+
+def test_getLocation_not_present():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = Location(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    retrievedLocation = grid.getLocation(location.getID())
+
+    # verify
+    assert retrievedLocation == None
+
+def test_getLocation_not_present_warns(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = Location(NORMAL_SIZE, NORMAL_SIZE)
+    capsys.readouterr()
+
+    # execute
+    grid.getLocation(location.getID())
+
+    # verify
+    assert capsys.readouterr().out == "Warning: A location was not present when attempting to retrieve it from a grid.\n"
+
+def test_getLocation_is_silent(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getRandomLocation()
+    capsys.readouterr()
+
+    # execute
+    retrievedLocation = grid.getLocation(location.getID())
+
+    # verify
+    assert retrievedLocation == location
+    assert capsys.readouterr().out == ""
 
 def test_grid_removeEntity():
     # prepare

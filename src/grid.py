@@ -77,15 +77,20 @@ class Grid(object):
             return
         del self.locations[location.getID()]
     
-    # Adds an entity to a random location in this grid.
+    # Adds an entity to a random location in this grid, unless this grid has no locations.
     def addEntity(self, entity: Entity):
+        if len(self.locations) == 0:
+            print("Warning: A grid had no locations when attempting to add an entity to it.")
+            return
         entity.setGridID(self.getID())
         self.getRandomLocation().addEntity(entity)
     
-    # Adds an entity to a specified location in this grid.
+    # Adds an entity to a specified location in this grid, unless that location is not in this grid.
     def addEntityToLocation(self, entity: Entity, location):
+        if location.getID() not in self.locations:
+            print("Warning: A location was not present when attempting to add an entity to it in a grid.")
+            return
         entity.setGridID(self.getID())
-        
         self.locations[location.getID()].addEntity(entity)
     
     # Removes an entity from every location of this grid and clears the entity's grid ID.
@@ -114,12 +119,18 @@ class Grid(object):
                 location = Location(x, y)
                 self.locations[location.getID()] = location
     
-    # Returns a location with the specified ID.
+    # Returns the location with the specified ID, or None if no such location is in this grid.
     def getLocation(self, id):
+        if id not in self.locations:
+            print("Warning: A location was not present when attempting to retrieve it from a grid.")
+            return None
         return self.locations[id]
     
-    # Returns a random location.
+    # Returns a random location, or None if this grid has no locations.
     def getRandomLocation(self):
+        if len(self.locations) == 0:
+            print("Warning: A grid had no locations when attempting to retrieve a random location from it.")
+            return None
         index = random.randrange(0, len(self.locations))
         id = list(self.locations.keys())[index]
         return self.locations[id]
