@@ -45,15 +45,17 @@ class Environment(object):
     def setGrid(self, grid):
         self.grid = grid
 
-    # Adds an entity to the underlying grid.
+    # Adds an entity to the underlying grid and sets the entity's environment ID only if the grid accepted it.
     def addEntity(self, entity: Entity):
-        entity.setEnvironmentID(self.getID())
         self.grid.addEntity(entity)
-    
-    # Adds an entity to a particular location in the underlying grid of this environment.
+        if self.grid.isEntityPresent(entity):
+            entity.setEnvironmentID(self.getID())
+
+    # Adds an entity to a particular location in the underlying grid and sets the entity's environment ID only if the grid accepted it.
     def addEntityToLocation(self, entity: Entity, location):
-        entity.setEnvironmentID(self.getID())
         self.grid.addEntityToLocation(entity, location)
+        if self.grid.isEntityPresent(entity):
+            entity.setEnvironmentID(self.getID())
     
     # Removes an entity from the underlying grid and clears the entity's environment ID.
     def removeEntity(self, entity: Entity):

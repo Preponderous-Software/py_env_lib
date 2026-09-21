@@ -40,6 +40,64 @@ def test_setters():
     environment.setGrid(Grid(NORMAL_SIZE, NORMAL_SIZE))
     assert environment.getGrid() != None
 
+# test adding entities
+def test_addEntity_sets_containment_ids():
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+
+    # execute
+    environment.addEntity(entity)
+
+    # verify
+    assert environment.isEntityPresent(entity) == True
+    assert entity.getEnvironmentID() == environment.getID()
+    assert entity.getGridID() == environment.getGrid().getID()
+
+def test_addEntity_to_an_environment_with_no_locations_preserves_containment_ids():
+    # prepare
+    environment = Environment("empty", 0)
+    entity = Entity("test")
+
+    # execute
+    environment.addEntity(entity)
+
+    # verify
+    assert environment.isEntityPresent(entity) == False
+    assert environment.getNumEntities() == 0
+    assert entity.getEnvironmentID() == -1
+    assert entity.getGridID() == -1
+
+def test_addEntityToLocation_sets_containment_ids():
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    location = environment.getGrid().getFirstLocation()
+
+    # execute
+    environment.addEntityToLocation(entity, location)
+
+    # verify
+    assert environment.isEntityPresent(entity) == True
+    assert entity.getEnvironmentID() == environment.getID()
+    assert entity.getGridID() == environment.getGrid().getID()
+    assert entity.getLocationID() == location.getID()
+
+def test_addEntityToLocation_not_in_grid_preserves_containment_ids():
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    location = Location(NORMAL_SIZE + 1, NORMAL_SIZE + 1)
+
+    # execute
+    environment.addEntityToLocation(entity, location)
+
+    # verify
+    assert environment.isEntityPresent(entity) == False
+    assert entity.getEnvironmentID() == -1
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
 # test removing entities
 def test_removeEntity_clears_containment_ids():
     environment = Environment("test", NORMAL_SIZE)
