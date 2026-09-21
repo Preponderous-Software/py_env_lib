@@ -34,8 +34,11 @@ class Grid(object):
     def getLocations(self):
         return self.locations
 
-    # Returns the first location in this grid.
+    # Returns the first location in this grid, or None if this grid has no locations.
     def getFirstLocation(self):
+        if len(self.locations) == 0:
+            print("Warning: A grid had no locations when attempting to retrieve the first location from it.")
+            return None
         return next(iter(self.locations.values()))
 
     # Returns the number of locations in this grid.

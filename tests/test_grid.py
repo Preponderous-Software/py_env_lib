@@ -313,6 +313,50 @@ def test_getFirstLocation():
     assert location != None
     assert location.getID() in grid.getLocations()
 
+def test_getFirstLocation_from_a_grid_with_no_locations():
+    # prepare
+    grid = Grid(0, 0)
+
+    # execute
+    location = grid.getFirstLocation()
+
+    # verify
+    assert location == None
+
+def test_getFirstLocation_from_a_grid_with_no_locations_warns(capsys):
+    # prepare
+    grid = Grid(0, 0)
+    capsys.readouterr()
+
+    # execute
+    grid.getFirstLocation()
+
+    # verify
+    assert capsys.readouterr().out == "Warning: A grid had no locations when attempting to retrieve the first location from it.\n"
+
+def test_getFirstLocation_from_a_grid_whose_locations_were_all_removed():
+    # prepare
+    grid = Grid(1, 1)
+    grid.removeLocation(grid.getFirstLocation())
+
+    # execute
+    location = grid.getFirstLocation()
+
+    # verify
+    assert location == None
+
+def test_getFirstLocation_is_silent(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    capsys.readouterr()
+
+    # execute
+    location = grid.getFirstLocation()
+
+    # verify
+    assert location != None
+    assert capsys.readouterr().out == ""
+
 def test_removeLocation():
     # prepare
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
