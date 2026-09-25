@@ -43,3 +43,43 @@ def test_printInfo():
     entity.printInfo = MagicMock()
     entity.printInfo()
     entity.printInfo.assert_called_once_with()
+
+def test_printInfo_output(capsys):
+    # prepare
+    entity = Entity("test")
+    entity.setID(1)
+    entity.setCreationDate("date")
+    entity.setEnvironmentID(2)
+    entity.setGridID(3)
+    entity.setLocationID(4)
+
+    # execute
+    entity.printInfo()
+
+    # verify
+    assert capsys.readouterr().out == (
+        "--------------\n"
+        "test\n"
+        "--------------\n"
+        "ID:  1\n"
+        "Creation Date:  date\n"
+        "Environment ID:  2\n"
+        "Grid ID:  3\n"
+        "Location ID:  4\n"
+        "\n\n"
+    )
+
+def test_printInfo_output_for_an_uncontained_entity(capsys):
+    # prepare
+    entity = Entity("test")
+    entity.setID(1)
+    entity.setCreationDate("date")
+
+    # execute
+    entity.printInfo()
+
+    # verify
+    output = capsys.readouterr().out
+    assert "Environment ID:  -1\n" in output
+    assert "Grid ID:  -1\n" in output
+    assert "Location ID:  -1\n" in output

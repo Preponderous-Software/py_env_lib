@@ -132,3 +132,70 @@ def test_getting_entity_by_id_not_present():
     environment = Environment("test", NORMAL_SIZE)
     entity = Entity("test")
     assert environment.getEntity(entity.getID()) == None
+
+# test counting entities
+def test_getNumEntities_counts_added_entities():
+    environment = Environment("test", NORMAL_SIZE)
+    for i in range(3):
+        environment.addEntity(Entity("test" + str(i)))
+    assert environment.getNumEntities() == 3
+
+def test_getNumEntities_after_removing_an_entity():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    otherEntity = Entity("other test")
+    environment.addEntity(entity)
+    environment.addEntity(otherEntity)
+
+    environment.removeEntity(entity)
+    assert environment.getNumEntities() == 1
+
+def test_getNumEntities_delegates_to_grid():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = MagicMock()
+    grid.getNumEntities.return_value = 7
+    environment.setGrid(grid)
+    assert environment.getNumEntities() == 7
+    grid.getNumEntities.assert_called_once_with()
+
+# test printing info
+def test_printInfo_output(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    environment.setID(1)
+    environment.creationDate = "date"
+    grid = MagicMock()
+    grid.getNumEntities.return_value = 2
+    grid.getSize.return_value = 100
+    grid.getID.return_value = 3
+    environment.setGrid(grid)
+
+    # execute
+    environment.printInfo()
+
+    # verify
+    assert capsys.readouterr().out == (
+        "--------------\n"
+        "test\n"
+        "--------------\n"
+        "Num entities:  2\n"
+        "Num locations:  100\n"
+        "Creation Date:  date\n"
+        "ID:  1\n"
+        "Grid ID:  3\n"
+        "\n\n"
+    )
+
+def test_printInfo_output_reflects_a_real_grid(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    environment.addEntity(Entity("test"))
+
+    # execute
+    environment.printInfo()
+
+    # verify
+    output = capsys.readouterr().out
+    assert "Num entities:  1\n" in output
+    assert "Num locations:  " + str(NORMAL_SIZE * NORMAL_SIZE) + "\n" in output
+    assert "Grid ID:  " + str(environment.getGrid().getID()) + "\n" in output
