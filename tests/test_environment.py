@@ -37,6 +37,8 @@ def test_setters():
     assert environment.getID() == 1
     environment.setName("test2")
     assert environment.getName() == "test2"
+    environment.setCreationDate("test3")
+    assert environment.getCreationDate() == "test3"
     environment.setGrid(Grid(NORMAL_SIZE, NORMAL_SIZE))
     assert environment.getGrid() != None
 
@@ -163,7 +165,7 @@ def test_printInfo_output(capsys):
     # prepare
     environment = Environment("test", NORMAL_SIZE)
     environment.setID(1)
-    environment.creationDate = "date"
+    environment.setCreationDate("date")
     grid = MagicMock()
     grid.getNumEntities.return_value = 2
     grid.getSize.return_value = 100

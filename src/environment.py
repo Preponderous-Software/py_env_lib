@@ -41,6 +41,10 @@ class Environment(object):
     def setName(self, name):
         self.name = name
 
+    # Sets the creation timestamp for this environment.
+    def setCreationDate(self, creationDate):
+        self.creationDate = creationDate
+
     # Sets this environment's grid.
     def setGrid(self, grid):
         self.grid = grid
