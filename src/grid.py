@@ -30,7 +30,7 @@ class Grid(object):
     def getRows(self):
         return self.rows
 
-    # Returns the list of locations in this grid.
+    # Returns the dictionary of locations in this grid, keyed by location ID.
     def getLocations(self):
         return self.locations
 
