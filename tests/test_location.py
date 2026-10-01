@@ -113,3 +113,64 @@ def test_getEntityById_not_present():
     entity = Entity("test")
     retrievedEntity = location.getEntity(entity.getID())
     assert retrievedEntity == None
+
+def test_getEntityById_not_present_warns(capsys):
+    location = Location(0, 0)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    location.getEntity(entity.getID())
+    assert capsys.readouterr().out == "Warning: An entity was not present when attempting to retrieve it from a location.\n"
+
+def test_getEntityById_is_silent(capsys):
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    capsys.readouterr()
+
+    location.getEntity(entity.getID())
+    assert capsys.readouterr().out == ""
+
+# test warnings when adding and removing entities
+def test_addEntity_already_present_is_not_duplicated():
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+
+    location.addEntity(entity)
+    assert location.getNumEntities() == 1
+    assert entity.getLocationID() == location.getID()
+
+def test_addEntity_already_present_warns(capsys):
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    capsys.readouterr()
+
+    location.addEntity(entity)
+    assert capsys.readouterr().out == "Warning: An entity was already present when attempting to add it to a location.\n"
+
+def test_addEntity_is_silent(capsys):
+    location = Location(0, 0)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    location.addEntity(entity)
+    assert capsys.readouterr().out == ""
+
+def test_removeEntity_not_present_warns(capsys):
+    location = Location(0, 0)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    location.removeEntity(entity)
+    assert capsys.readouterr().out == "Warning: An entity was not present when attempting to remove it from a location.\n"
+
+def test_removeEntity_is_silent(capsys):
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    capsys.readouterr()
+
+    location.removeEntity(entity)
+    assert capsys.readouterr().out == ""
