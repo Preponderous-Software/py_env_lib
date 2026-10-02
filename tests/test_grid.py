@@ -5,6 +5,8 @@ from src.entity import Entity
 
 NORMAL_SIZE=10
 LARGE_SIZE=100
+RECT_COLUMNS=3
+RECT_ROWS=5
 
 # test initializing grid
 def test_initialization():    
@@ -22,6 +24,23 @@ def test_initialization_large():
     assert grid.rows == LARGE_SIZE
     assert grid.locations != None
     assert grid.getSize() == LARGE_SIZE * LARGE_SIZE
+
+def test_initialization_rectangular():
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+    assert grid.getColumns() == RECT_COLUMNS
+    assert grid.getRows() == RECT_ROWS
+    assert grid.getSize() == RECT_COLUMNS * RECT_ROWS
+
+def test_generateLocations_rectangular_coordinates():
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+    coordinates = set()
+    for location in grid.getLocations().values():
+        coordinates.add((location.getX(), location.getY()))
+    expected = set()
+    for x in range(RECT_COLUMNS):
+        for y in range(RECT_ROWS):
+            expected.add((x, y))
+    assert coordinates == expected
 
 # test getters
 def test_getters():    
@@ -277,6 +296,27 @@ def test_getLocationByCoordinates_LargeGrid():
     assert retrievedLocation != None
     assert retrievedLocation.getX() == targetX
     assert retrievedLocation.getY() == targetY
+
+def test_getLocationByCoordinates_out_of_bounds():
+    # prepare
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+
+    # execute and verify
+    assert grid.getLocationByCoordinates(RECT_COLUMNS, 0) == -1
+    assert grid.getLocationByCoordinates(0, RECT_ROWS) == -1
+    assert grid.getLocationByCoordinates(-1, 0) == -1
+    assert grid.getLocationByCoordinates(0, -1) == -1
+
+def test_getLocationByCoordinates_rectangular_corner():
+    # prepare
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+
+    # execute
+    retrievedLocation = grid.getLocationByCoordinates(RECT_COLUMNS - 1, RECT_ROWS - 1)
+
+    # verify
+    assert retrievedLocation.getX() == RECT_COLUMNS - 1
+    assert retrievedLocation.getY() == RECT_ROWS - 1
 
 def test_isEntityPresent():
     # prepare
@@ -673,3 +713,25 @@ def test_getRight_invalid_location():
 
     # verify
     assert right == -1
+
+def test_getRight_at_right_edge_of_rectangular_grid():
+    # prepare
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+    location = grid.getLocationByCoordinates(RECT_COLUMNS - 1, 0)
+
+    # execute
+    right = grid.getRight(location)
+
+    # verify
+    assert right == -1
+
+def test_getDown_at_bottom_edge_of_rectangular_grid():
+    # prepare
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+    location = grid.getLocationByCoordinates(0, RECT_ROWS - 1)
+
+    # execute
+    down = grid.getDown(location)
+
+    # verify
+    assert down == -1
