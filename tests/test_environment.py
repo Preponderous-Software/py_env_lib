@@ -22,6 +22,12 @@ def test_initializing_large_environment():
     assert environment.grid != None
     assert environment.creationDate != None
 
+def test_initialization_creates_a_square_grid_of_the_given_size():
+    environment = Environment("test", NORMAL_SIZE)
+    assert environment.getGrid().getColumns() == NORMAL_SIZE
+    assert environment.getGrid().getRows() == NORMAL_SIZE
+    assert environment.getGrid().getSize() == NORMAL_SIZE * NORMAL_SIZE
+
 # test getters
 def test_getters():
     environment = Environment("test", NORMAL_SIZE)
@@ -100,6 +106,54 @@ def test_addEntityToLocation_not_in_grid_preserves_containment_ids():
     assert entity.getGridID() == -1
     assert entity.getLocationID() == -1
 
+def test_addEntity_delegates_to_grid():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = MagicMock()
+    grid.isEntityPresent.return_value = True
+    environment.setGrid(grid)
+    entity = Entity("test")
+
+    environment.addEntity(entity)
+    grid.addEntity.assert_called_once_with(entity)
+    grid.isEntityPresent.assert_called_once_with(entity)
+    assert entity.getEnvironmentID() == environment.getID()
+
+def test_addEntity_rejected_by_grid_preserves_environment_id():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = MagicMock()
+    grid.isEntityPresent.return_value = False
+    environment.setGrid(grid)
+    entity = Entity("test")
+
+    environment.addEntity(entity)
+    grid.addEntity.assert_called_once_with(entity)
+    assert entity.getEnvironmentID() == -1
+
+def test_addEntityToLocation_delegates_to_grid():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = MagicMock()
+    grid.isEntityPresent.return_value = True
+    environment.setGrid(grid)
+    entity = Entity("test")
+    location = MagicMock()
+
+    environment.addEntityToLocation(entity, location)
+    grid.addEntityToLocation.assert_called_once_with(entity, location)
+    grid.isEntityPresent.assert_called_once_with(entity)
+    assert entity.getEnvironmentID() == environment.getID()
+
+def test_addEntityToLocation_rejected_by_grid_preserves_environment_id():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = MagicMock()
+    grid.isEntityPresent.return_value = False
+    environment.setGrid(grid)
+    entity = Entity("test")
+    location = MagicMock()
+
+    environment.addEntityToLocation(entity, location)
+    grid.addEntityToLocation.assert_called_once_with(entity, location)
+    assert entity.getEnvironmentID() == -1
+
 # test removing entities
 def test_removeEntity_clears_containment_ids():
     environment = Environment("test", NORMAL_SIZE)
@@ -124,6 +178,43 @@ def test_removeEntity_not_present_preserves_containment_ids():
     assert entity.getEnvironmentID() == occupiedEnvironment.getID()
     assert entity.getGridID() == occupiedEnvironment.getGrid().getID()
 
+def test_removeEntity_delegates_to_grid():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = MagicMock()
+    grid.isEntityPresent.return_value = True
+    environment.setGrid(grid)
+    entity = Entity("test")
+    entity.setEnvironmentID(environment.getID())
+
+    environment.removeEntity(entity)
+    grid.removeEntity.assert_called_once_with(entity)
+    assert entity.getEnvironmentID() == -1
+
+def test_removeEntity_not_present_does_not_call_grid_removeEntity():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = MagicMock()
+    grid.isEntityPresent.return_value = False
+    environment.setGrid(grid)
+    entity = Entity("test")
+    entity.setEnvironmentID("sentinel")
+
+    environment.removeEntity(entity)
+    grid.isEntityPresent.assert_called_once_with(entity)
+    grid.removeEntity.assert_not_called()
+    assert entity.getEnvironmentID() == "sentinel"
+
+# test checking if entity is present
+def test_isEntityPresent_delegates_to_grid():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = MagicMock()
+    grid.isEntityPresent.return_value = True
+    environment.setGrid(grid)
+    entity = Entity("test")
+
+    assert environment.isEntityPresent(entity) == True
+    grid.isEntityPresent.assert_called_once_with(entity)
+
+# test getting entities
 def test_getting_entity_by_id():
     environment = Environment("test", NORMAL_SIZE)
     entity = Entity("test")
@@ -134,6 +225,16 @@ def test_getting_entity_by_id_not_present():
     environment = Environment("test", NORMAL_SIZE)
     entity = Entity("test")
     assert environment.getEntity(entity.getID()) == None
+
+def test_getting_entity_by_id_delegates_to_grid():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = MagicMock()
+    entity = Entity("test")
+    grid.getEntity.return_value = entity
+    environment.setGrid(grid)
+
+    assert environment.getEntity(entity.getID()) == entity
+    grid.getEntity.assert_called_once_with(entity.getID())
 
 # test counting entities
 def test_getNumEntities_counts_added_entities():
