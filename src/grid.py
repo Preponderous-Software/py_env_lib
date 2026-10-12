@@ -138,7 +138,7 @@ class Grid(object):
         id = list(self.locations.keys())[index]
         return self.locations[id]
     
-    # Returns a location at the specified coordinates.
+    # Returns the location at the specified coordinates, or -1 if no location in this grid has them.
     def getLocationByCoordinates(self, x, y):
         for locationId in self.locations:
             location = self.locations[locationId]
@@ -146,31 +146,31 @@ class Grid(object):
                 return location
         return -1
 
-    # Returns the location above the specified location.
+    # Returns the location above the specified location, or -1 if there is none or the specified location is -1.
     def getUp(self, location: Location):
         if location == -1:
             return -1
         return self.getLocationByCoordinates(location.getX(), location.getY() - 1)
     
-    # Returns the location to the right of the specified location.
+    # Returns the location to the right of the specified location, or -1 if there is none or the specified location is -1.
     def getRight(self, location: Location):
         if location == -1:
             return -1
         return self.getLocationByCoordinates(location.getX() + 1, location.getY())
     
-    # Returns the location underneath the specified location.
+    # Returns the location underneath the specified location, or -1 if there is none or the specified location is -1.
     def getDown(self, location: Location):
         if location == -1:
             return -1
         return self.getLocationByCoordinates(location.getX(), location.getY() + 1)
     
-    # Returns the location to the left of the specified location.
+    # Returns the location to the left of the specified location, or -1 if there is none or the specified location is -1.
     def getLeft(self, location: Location):
         if location == -1:
             return -1
         return self.getLocationByCoordinates(location.getX() - 1, location.getY())
 
-    # Returns the entity with the specified ID.
+    # Returns the entity with the specified ID, or None if no location in this grid contains it.
     def getEntity(self, id):
         for locationId in self.locations:
             location = self.locations[locationId]

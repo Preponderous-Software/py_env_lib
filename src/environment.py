@@ -88,6 +88,6 @@ class Environment(object):
         print("Grid ID: ", self.getGrid().getID())
         print("\n")
     
-    # Returns the entity in this environment with the given ID.
+    # Returns the entity in this environment with the given ID, or None if it is not in this environment.
     def getEntity(self, id):
         return self.grid.getEntity(id)
