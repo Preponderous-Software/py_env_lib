@@ -31,7 +31,7 @@ class Location(object):
     def getNumEntities(self):
         return len(self.entities)
     
-    # Adds an entity to this location.
+    # Adds an entity to this location and sets the entity's location ID, unless the entity is already present.
     def addEntity(self, entity: Entity):
         if not self.isEntityPresent(entity):
             self.entities[entity.getID()] = entity
@@ -39,7 +39,7 @@ class Location(object):
         else:
             print("Warning: An entity was already present when attempting to add it to a location.")
     
-    # Removes an entity from this location and clears the entity's location ID.
+    # Removes an entity from this location and clears the entity's location ID, unless the entity is not present.
     def removeEntity(self, entity: Entity):
         if self.isEntityPresent(entity):
             del self.entities[entity.getID()]
@@ -55,7 +55,7 @@ class Location(object):
     def getEntities(self):
         return self.entities
     
-    # Returns an entity in this location matching the given ID.
+    # Returns the entity in this location with the given ID, or None if it is not in this location.
     def getEntity(self, id):
         if not id in self.entities:
             print("Warning: An entity was not present when attempting to retrieve it from a location.")
