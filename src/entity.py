@@ -25,7 +25,7 @@ class Entity(object):
     def getName(self):
         return self.name
 
-    # Returns the ID of the environment that this entity is in, or -1 if it is not in one.
+    # Returns the ID of the environment that this entity is in, or -1 if none is recorded.
     def getEnvironmentID(self):
         return self.environmentID
 
@@ -33,11 +33,11 @@ class Entity(object):
     def getCreationDate(self):
         return self.creationDate
 
-    # Returns the ID of the grid that this entity is in, or -1 if it is not in one.
+    # Returns the ID of the grid that this entity is in, or -1 if none is recorded.
     def getGridID(self):
         return self.gridID
 
-    # Returns the ID of the location that this entity is in, or -1 if it is not in one.
+    # Returns the ID of the location that this entity is in, or -1 if none is recorded.
     def getLocationID(self):
         return self.locationID
     
