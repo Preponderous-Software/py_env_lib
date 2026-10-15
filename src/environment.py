@@ -61,7 +61,7 @@ class Environment(object):
         if self.grid.isEntityPresent(entity):
             entity.setEnvironmentID(self.getID())
     
-    # Removes an entity from the underlying grid and clears the entity's environment ID.
+    # Removes an entity from the underlying grid and clears the entity's environment ID, unless the entity is not in this environment.
     def removeEntity(self, entity: Entity):
         if not self.grid.isEntityPresent(entity):
             return

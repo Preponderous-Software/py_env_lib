@@ -96,7 +96,7 @@ class Grid(object):
         entity.setGridID(self.getID())
         self.locations[location.getID()].addEntity(entity)
     
-    # Removes an entity from every location of this grid and clears the entity's grid ID.
+    # Removes an entity from every location of this grid and clears the entity's grid ID, unless the entity is not in this grid.
     def removeEntity(self, entity: Entity):
         removed = False
         for locationId in self.getLocations():
@@ -115,7 +115,7 @@ class Grid(object):
                 return True
         return False
 
-    # Generates the locations based on the columns and rows. Assumes an empty locations array.
+    # Generates the locations based on the columns and rows. Assumes an empty locations dictionary.
     def generateLocations(self):
         for x in range(self.getColumns()):
             for y in range(self.getRows()):
