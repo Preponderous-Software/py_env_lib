@@ -307,6 +307,18 @@ def test_getLocationByCoordinates_out_of_bounds():
     assert grid.getLocationByCoordinates(-1, 0) == -1
     assert grid.getLocationByCoordinates(0, -1) == -1
 
+def test_getLocationByCoordinates_out_of_bounds_is_silent(capsys):
+    # prepare
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+    capsys.readouterr()
+
+    # execute
+    retrievedLocation = grid.getLocationByCoordinates(RECT_COLUMNS, RECT_ROWS)
+
+    # verify
+    assert retrievedLocation == -1
+    assert capsys.readouterr().out == ""
+
 def test_getLocationByCoordinates_rectangular_corner():
     # prepare
     grid = Grid(RECT_COLUMNS, RECT_ROWS)
@@ -460,6 +472,33 @@ def test_addLocation():
     assert grid.getSize() == sizeBefore + 1
     assert location.getID() in grid.getLocations()
 
+def test_addLocation_already_present_is_not_duplicated():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getRandomLocation()
+    sizeBefore = grid.getSize()
+
+    # execute
+    grid.addLocation(location)
+
+    # verify
+    assert grid.getSize() == sizeBefore
+    assert grid.getLocation(location.getID()) == location
+
+def test_getNumEntities_counts_entities_across_locations():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    locations = list(grid.getLocations().values())
+    grid.addEntityToLocation(Entity("first"), locations[0])
+    grid.addEntityToLocation(Entity("second"), locations[0])
+    grid.addEntityToLocation(Entity("third"), locations[1])
+
+    # execute
+    numEntities = grid.getNumEntities()
+
+    # verify
+    assert numEntities == 3
+
 def test_getLocation():
     # prepare
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
@@ -580,6 +619,31 @@ def test_grid_removeEntity_not_present_preserves_containment_ids():
     # verify
     assert entity.getGridID() == occupiedGrid.getID()
     assert entity.getLocationID() == location.getID()
+
+def test_grid_removeEntity_is_silent(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntityToLocation(entity, grid.getRandomLocation())
+    capsys.readouterr()
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert capsys.readouterr().out == ""
+
+def test_grid_removeEntity_not_present_is_silent(capsys):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert capsys.readouterr().out == ""
 
 # test navigating the grid
 def test_getUp():
