@@ -9,6 +9,15 @@ def test_initialization():
     assert location.x == 0
     assert location.y == 0
 
+def test_initialization_has_no_entities():
+    location = Location(0, 0)
+    assert location.getEntities() == {}
+
+def test_initialization_assigns_distinct_ids():
+    first = Location(0, 0)
+    second = Location(0, 0)
+    assert first.getID() != second.getID()
+
 # test getters
 def test_getters():
     location = Location(0, 0)
@@ -16,10 +25,22 @@ def test_getters():
     assert location.getX() == 0
     assert location.getY() == 0
 
+def test_getters_with_distinct_coordinates():
+    location = Location(3, 7)
+    assert location.getX() == 3
+    assert location.getY() == 7
+
 # test getting number of entities
 def test_getNumEntities():
     location = Location(0, 0)
     assert location.getNumEntities() == 0
+
+def test_getNumEntities_counts_multiple_entities():
+    location = Location(0, 0)
+    location.addEntity(Entity("first"))
+    location.addEntity(Entity("second"))
+    location.addEntity(Entity("third"))
+    assert location.getNumEntities() == 3
 
 # test adding entity
 def test_addEntity(monkeypatch):
@@ -78,6 +99,28 @@ def test_removeEntity_not_present_preserves_location_id():
     otherLocation.removeEntity(entity)
     assert entity.getLocationID() == occupiedLocation.getID()
 
+def test_removeEntity_leaves_other_entities():
+    location = Location(0, 0)
+    removed = Entity("removed")
+    kept = Entity("kept")
+    location.addEntity(removed)
+    location.addEntity(kept)
+
+    location.removeEntity(removed)
+    assert location.getNumEntities() == 1
+    assert location.isEntityPresent(kept) == True
+    assert kept.getLocationID() == location.getID()
+
+def test_addEntity_after_removal():
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    location.removeEntity(entity)
+
+    location.addEntity(entity)
+    assert location.getNumEntities() == 1
+    assert entity.getLocationID() == location.getID()
+
 # test checking if entity is present
 def test_isEntityPresent():
     location = Location(0, 0)
@@ -91,6 +134,13 @@ def test_isEntityPresent_not_present():
     entity = Entity("test")
     assert location.isEntityPresent(entity) == False
 
+def test_isEntityPresent_after_removal():
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    location.removeEntity(entity)
+    assert location.isEntityPresent(entity) == False
+
 # test getting entities
 def test_getEntities(monkeypatch):
     monkeypatch.setattr(Location, "isEntityPresent", MagicMock(return_value=False))
@@ -100,6 +150,21 @@ def test_getEntities(monkeypatch):
     entity = Entity("test")
     location.addEntity(entity)
     assert len(location.getEntities()) == 1
+
+def test_getEntities_is_keyed_by_entity_id():
+    location = Location(0, 0)
+    first = Entity("first")
+    second = Entity("second")
+    location.addEntity(first)
+    location.addEntity(second)
+    assert location.getEntities() == {first.getID(): first, second.getID(): second}
+
+def test_getEntityById_after_removal():
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    location.removeEntity(entity)
+    assert location.getEntity(entity.getID()) == None
 
 def test_getEntityById():
     location = Location(0, 0)
