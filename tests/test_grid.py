@@ -167,6 +167,21 @@ def test_adding_an_entity_to_a_random_location_is_silent(capsys):
     assert capsys.readouterr().out == ""
     assert grid.getNumEntities() == 1
 
+def test_adding_an_entity_to_a_random_location_sets_containment_ids():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+
+    # execute
+    grid.addEntity(entity)
+
+    # verify
+    assert entity.getGridID() == grid.getID()
+    location = grid.getLocation(entity.getLocationID())
+    assert location != None
+    assert location.isEntityPresent(entity)
+    assert grid.isEntityPresent(entity)
+
 def test_retrieving_random_location():
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
     location = grid.getRandomLocation()
@@ -214,6 +229,18 @@ def test_retrieving_entity_by_id():
 def test_retrieving_entity_by_id_not_present():
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
     entity = Entity("test")
+    assert grid.getEntity(entity.getID()) == None
+
+def test_retrieving_entity_by_id_after_removal():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntity(entity)
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
     assert grid.getEntity(entity.getID()) == None
 
 def test_retrieving_entity_by_id_not_present_is_silent(capsys):
@@ -484,6 +511,55 @@ def test_addLocation_already_present_is_not_duplicated():
     # verify
     assert grid.getSize() == sizeBefore
     assert grid.getLocation(location.getID()) == location
+
+def test_addLocation_is_reachable_by_coordinates_and_navigation():
+    # prepare
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+    location = Location(RECT_COLUMNS, 0)
+    edgeLocation = grid.getLocationByCoordinates(RECT_COLUMNS - 1, 0)
+
+    # execute
+    grid.addLocation(location)
+
+    # verify
+    assert grid.getLocationByCoordinates(RECT_COLUMNS, 0) == location
+    assert grid.getRight(edgeLocation) == location
+    assert grid.getLeft(location) == edgeLocation
+
+def test_getLocationByCoordinates_after_removing_that_location():
+    # prepare
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+    location = grid.getLocationByCoordinates(1, 1)
+
+    # execute
+    grid.removeLocation(location)
+
+    # verify
+    assert grid.getLocationByCoordinates(1, 1) == -1
+
+def test_getNumEntities_of_a_new_grid():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    numEntities = grid.getNumEntities()
+
+    # verify
+    assert numEntities == 0
+
+def test_getNumEntities_after_removing_an_entity():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    locations = list(grid.getLocations().values())
+    entity = Entity("first")
+    grid.addEntityToLocation(entity, locations[0])
+    grid.addEntityToLocation(Entity("second"), locations[1])
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert grid.getNumEntities() == 1
 
 def test_getNumEntities_counts_entities_across_locations():
     # prepare
