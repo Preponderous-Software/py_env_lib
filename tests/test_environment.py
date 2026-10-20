@@ -1,3 +1,4 @@
+import datetime
 from unittest.mock import MagicMock
 from src.environment import Environment
 from src.grid import Grid
@@ -6,6 +7,8 @@ from src.location import Location
 
 NORMAL_SIZE=10
 LARGE_SIZE=100
+RECT_COLUMNS=3
+RECT_ROWS=5
 
 # test initializing environment
 def test_initialization():
@@ -28,6 +31,19 @@ def test_initialization_creates_a_square_grid_of_the_given_size():
     assert environment.getGrid().getRows() == NORMAL_SIZE
     assert environment.getGrid().getSize() == NORMAL_SIZE * NORMAL_SIZE
 
+def test_initialization_assigns_distinct_ids():
+    environment = Environment("test", NORMAL_SIZE)
+    otherEnvironment = Environment("test", NORMAL_SIZE)
+    assert environment.getID() != otherEnvironment.getID()
+    assert environment.getGrid().getID() != otherEnvironment.getGrid().getID()
+
+def test_initialization_records_creation_date_as_datetime():
+    before = datetime.datetime.now()
+    environment = Environment("test", NORMAL_SIZE)
+    after = datetime.datetime.now()
+    assert isinstance(environment.getCreationDate(), datetime.datetime)
+    assert before <= environment.getCreationDate() <= after
+
 # test getters
 def test_getters():
     environment = Environment("test", NORMAL_SIZE)
@@ -47,6 +63,26 @@ def test_setters():
     assert environment.getCreationDate() == "test3"
     environment.setGrid(Grid(NORMAL_SIZE, NORMAL_SIZE))
     assert environment.getGrid() != None
+
+def test_setGrid_replaces_the_grid():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+    environment.setGrid(grid)
+    assert environment.getGrid() is grid
+    assert environment.getGrid().getSize() == RECT_COLUMNS * RECT_ROWS
+
+def test_addEntity_after_setGrid_uses_the_new_grid():
+    environment = Environment("test", NORMAL_SIZE)
+    originalGrid = environment.getGrid()
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+    environment.setGrid(grid)
+    entity = Entity("test")
+
+    environment.addEntity(entity)
+    assert grid.isEntityPresent(entity) == True
+    assert originalGrid.isEntityPresent(entity) == False
+    assert entity.getGridID() == grid.getID()
+    assert entity.getEnvironmentID() == environment.getID()
 
 # test adding entities
 def test_addEntity_sets_containment_ids():
@@ -214,6 +250,24 @@ def test_isEntityPresent_delegates_to_grid():
     assert environment.isEntityPresent(entity) == True
     grid.isEntityPresent.assert_called_once_with(entity)
 
+def test_isEntityPresent_after_adding_an_entity():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    assert environment.isEntityPresent(entity) == True
+
+def test_isEntityPresent_not_present():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    assert environment.isEntityPresent(entity) == False
+
+def test_isEntityPresent_in_another_environment():
+    occupiedEnvironment = Environment("test", NORMAL_SIZE)
+    otherEnvironment = Environment("other test", NORMAL_SIZE)
+    entity = Entity("test")
+    occupiedEnvironment.addEntity(entity)
+    assert otherEnvironment.isEntityPresent(entity) == False
+
 # test getting entities
 def test_getting_entity_by_id():
     environment = Environment("test", NORMAL_SIZE)
@@ -224,6 +278,14 @@ def test_getting_entity_by_id():
 def test_getting_entity_by_id_not_present():
     environment = Environment("test", NORMAL_SIZE)
     entity = Entity("test")
+    assert environment.getEntity(entity.getID()) == None
+
+def test_getting_entity_by_id_after_removal():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+
+    environment.removeEntity(entity)
     assert environment.getEntity(entity.getID()) == None
 
 def test_getting_entity_by_id_delegates_to_grid():
