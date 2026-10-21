@@ -1,3 +1,4 @@
+import datetime
 from unittest.mock import MagicMock
 from src.entity import Entity
 
@@ -10,6 +11,18 @@ def test_initialization():
     assert entity.environmentID == -1
     assert entity.gridID == -1
     assert entity.locationID == -1
+
+def test_initialization_assigns_distinct_ids():
+    entity = Entity("test")
+    otherEntity = Entity("test")
+    assert entity.getID() != otherEntity.getID()
+
+def test_initialization_records_creation_date_as_datetime():
+    before = datetime.datetime.now()
+    entity = Entity("test")
+    after = datetime.datetime.now()
+    assert isinstance(entity.getCreationDate(), datetime.datetime)
+    assert before <= entity.getCreationDate() <= after
 
 # test getters
 def test_getters():
@@ -35,6 +48,16 @@ def test_setters():
     entity.setGridID(3)
     assert entity.getGridID() == 3
     entity.setLocationID(4)
+    assert entity.getLocationID() == 4
+
+def test_setting_one_containment_id_leaves_the_others_unchanged():
+    entity = Entity("test")
+    entity.setEnvironmentID(2)
+    entity.setGridID(3)
+    entity.setLocationID(4)
+    entity.setGridID(-1)
+    assert entity.getEnvironmentID() == 2
+    assert entity.getGridID() == -1
     assert entity.getLocationID() == 4
 
 # test printing info
