@@ -115,6 +115,36 @@ def test_adding_an_entity_to_a_specific_location_is_silent(capsys):
     assert capsys.readouterr().out == ""
     assert entity.getGridID() == grid.getID()
 
+def test_adding_an_entity_to_the_same_location_twice_is_not_duplicated():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = grid.getRandomLocation()
+    grid.addEntityToLocation(entity, location)
+
+    # execute
+    grid.addEntityToLocation(entity, location)
+
+    # verify
+    assert grid.getNumEntities() == 1
+    assert location.getNumEntities() == 1
+
+def test_adding_an_entity_to_a_location_uses_the_grids_stored_location():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    storedLocation = grid.getRandomLocation()
+    lookalikeLocation = Location(storedLocation.getX(), storedLocation.getY())
+    lookalikeLocation.id = storedLocation.getID()
+
+    # execute
+    grid.addEntityToLocation(entity, lookalikeLocation)
+
+    # verify
+    assert storedLocation.isEntityPresent(entity)
+    assert lookalikeLocation.getNumEntities() == 0
+    assert entity.getLocationID() == storedLocation.getID()
+
 def test_adding_an_entity_to_a_grid_with_no_locations():
     # prepare
     grid = Grid(0, 0)
@@ -187,6 +217,16 @@ def test_retrieving_random_location():
     location = grid.getRandomLocation()
     assert location != None
 
+def test_retrieving_random_location_returns_a_location_in_the_grid():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    location = grid.getRandomLocation()
+
+    # verify
+    assert grid.getLocations()[location.getID()] is location
+
 def test_retrieving_random_location_from_a_grid_with_no_locations():
     # prepare
     grid = Grid(0, 0)
@@ -230,6 +270,17 @@ def test_retrieving_entity_by_id_not_present():
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
     entity = Entity("test")
     assert grid.getEntity(entity.getID()) == None
+
+def test_retrieving_entity_by_id_from_a_grid_with_no_locations():
+    # prepare
+    grid = Grid(0, 0)
+    entity = Entity("test")
+
+    # execute
+    retrievedEntity = grid.getEntity(entity.getID())
+
+    # verify
+    assert retrievedEntity == None
 
 def test_retrieving_entity_by_id_after_removal():
     # prepare
