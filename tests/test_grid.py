@@ -432,6 +432,34 @@ def test_isEntityPresent_not_present():
     # verify
     assert isPresent == False
 
+def test_isEntityPresent_after_removal():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntityToLocation(entity, grid.getRandomLocation())
+    grid.removeEntity(entity)
+
+    # execute
+    isPresent = grid.isEntityPresent(entity)
+
+    # verify
+    assert isPresent == False
+
+def test_isEntityPresent_after_removing_its_location():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = grid.getRandomLocation()
+    grid.addEntityToLocation(entity, location)
+    grid.removeLocation(location)
+
+    # execute
+    isPresent = grid.isEntityPresent(entity)
+
+    # verify
+    assert isPresent == False
+    assert location.isEntityPresent(entity) == True
+
 def test_getFirstLocation():
     # prepare
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
@@ -926,3 +954,40 @@ def test_getDown_at_bottom_edge_of_rectangular_grid():
 
     # verify
     assert down == -1
+
+def test_navigating_there_and_back_returns_the_same_location():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(1, 1)
+
+    # execute
+    upAndBack = grid.getDown(grid.getUp(location))
+    rightAndBack = grid.getLeft(grid.getRight(location))
+
+    # verify
+    assert upAndBack is location
+    assert rightAndBack is location
+
+def test_navigating_from_a_location_not_in_the_grid_uses_its_coordinates():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    foreignLocation = Location(1, 1)
+
+    # execute
+    right = grid.getRight(foreignLocation)
+
+    # verify
+    assert right is grid.getLocationByCoordinates(2, 1)
+    assert right.getID() in grid.getLocations()
+
+def test_navigating_into_a_removed_location():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(1, 1)
+    grid.removeLocation(grid.getLocationByCoordinates(1, 0))
+
+    # execute
+    up = grid.getUp(location)
+
+    # verify
+    assert up == -1
