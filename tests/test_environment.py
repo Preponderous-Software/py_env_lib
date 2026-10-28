@@ -239,6 +239,45 @@ def test_removeEntity_not_present_does_not_call_grid_removeEntity():
     grid.removeEntity.assert_not_called()
     assert entity.getEnvironmentID() == "sentinel"
 
+def test_addEntity_after_removal_restores_containment_ids():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    environment.removeEntity(entity)
+
+    environment.addEntity(entity)
+    assert environment.isEntityPresent(entity) == True
+    assert environment.getNumEntities() == 1
+    assert entity.getEnvironmentID() == environment.getID()
+    assert entity.getGridID() == environment.getGrid().getID()
+    assert entity.getLocationID() != -1
+
+def test_moving_an_entity_between_environments():
+    environment = Environment("test", NORMAL_SIZE)
+    otherEnvironment = Environment("other test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+
+    environment.removeEntity(entity)
+    otherEnvironment.addEntity(entity)
+    assert environment.isEntityPresent(entity) == False
+    assert otherEnvironment.isEntityPresent(entity) == True
+    assert entity.getEnvironmentID() == otherEnvironment.getID()
+    assert entity.getGridID() == otherEnvironment.getGrid().getID()
+
+def test_addEntityToLocation_from_another_environments_grid_preserves_containment_ids():
+    environment = Environment("test", NORMAL_SIZE)
+    otherEnvironment = Environment("other test", NORMAL_SIZE)
+    entity = Entity("test")
+    location = otherEnvironment.getGrid().getFirstLocation()
+
+    environment.addEntityToLocation(entity, location)
+    assert environment.isEntityPresent(entity) == False
+    assert otherEnvironment.isEntityPresent(entity) == False
+    assert entity.getEnvironmentID() == -1
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
 # test checking if entity is present
 def test_isEntityPresent_delegates_to_grid():
     environment = Environment("test", NORMAL_SIZE)
@@ -287,6 +326,13 @@ def test_getting_entity_by_id_after_removal():
 
     environment.removeEntity(entity)
     assert environment.getEntity(entity.getID()) == None
+
+def test_getting_entity_by_id_in_another_environment():
+    occupiedEnvironment = Environment("test", NORMAL_SIZE)
+    otherEnvironment = Environment("other test", NORMAL_SIZE)
+    entity = Entity("test")
+    occupiedEnvironment.addEntity(entity)
+    assert otherEnvironment.getEntity(entity.getID()) == None
 
 def test_getting_entity_by_id_delegates_to_grid():
     environment = Environment("test", NORMAL_SIZE)
