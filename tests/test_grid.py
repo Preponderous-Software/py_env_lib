@@ -63,6 +63,23 @@ def test_setters():
     grid.setLocations([])
     assert grid.getLocations() == []
 
+def test_setLocations_replaces_the_locations_used_by_lookups():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    oldLocation = grid.getLocationByCoordinates(0, 0)
+    newLocation = Location(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    grid.setLocations({newLocation.getID(): newLocation})
+
+    # verify
+    assert grid.getSize() == 1
+    assert grid.getFirstLocation() == newLocation
+    assert grid.getLocation(newLocation.getID()) == newLocation
+    assert grid.getLocationByCoordinates(NORMAL_SIZE, NORMAL_SIZE) == newLocation
+    assert grid.getLocationByCoordinates(0, 0) == -1
+    assert oldLocation.getID() not in grid.getLocations()
+
 # def adding an entity to a specific location
 def test_adding_an_entity_to_a_specific_location():
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
@@ -615,6 +632,46 @@ def test_getLocationByCoordinates_after_removing_that_location():
 
     # verify
     assert grid.getLocationByCoordinates(1, 1) == -1
+
+def test_getNumEntities_after_removing_a_location_with_an_entity():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    locations = list(grid.getLocations().values())
+    grid.addEntityToLocation(Entity("first"), locations[0])
+    grid.addEntityToLocation(Entity("second"), locations[1])
+
+    # execute
+    grid.removeLocation(locations[0])
+
+    # verify
+    assert grid.getNumEntities() == 1
+
+def test_retrieving_entity_by_id_after_removing_its_location():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = grid.getRandomLocation()
+    grid.addEntityToLocation(entity, location)
+
+    # execute
+    grid.removeLocation(location)
+
+    # verify
+    assert grid.getEntity(entity.getID()) == None
+
+def test_removeLocation_with_an_entity_preserves_containment_ids():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = grid.getRandomLocation()
+    grid.addEntityToLocation(entity, location)
+
+    # execute
+    grid.removeLocation(location)
+
+    # verify
+    assert entity.getGridID() == grid.getID()
+    assert entity.getLocationID() == location.getID()
 
 def test_getNumEntities_of_a_new_grid():
     # prepare
