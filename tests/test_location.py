@@ -239,3 +239,39 @@ def test_removeEntity_is_silent(capsys):
 
     location.removeEntity(entity)
     assert capsys.readouterr().out == ""
+
+# test an entity held by more than one location
+def test_addEntity_to_a_second_location_leaves_it_in_the_first():
+    first = Location(0, 0)
+    second = Location(1, 1)
+    entity = Entity("test")
+    first.addEntity(entity)
+
+    second.addEntity(entity)
+    assert first.isEntityPresent(entity) == True
+    assert second.isEntityPresent(entity) == True
+    assert entity.getLocationID() == second.getID()
+
+def test_removeEntity_from_the_earlier_location_clears_location_id():
+    first = Location(0, 0)
+    second = Location(1, 1)
+    entity = Entity("test")
+    first.addEntity(entity)
+    second.addEntity(entity)
+
+    first.removeEntity(entity)
+    assert first.isEntityPresent(entity) == False
+    assert second.isEntityPresent(entity) == True
+    assert entity.getLocationID() == -1
+
+def test_removeEntity_from_the_later_location_clears_location_id():
+    first = Location(0, 0)
+    second = Location(1, 1)
+    entity = Entity("test")
+    first.addEntity(entity)
+    second.addEntity(entity)
+
+    second.removeEntity(entity)
+    assert first.isEntityPresent(entity) == True
+    assert second.isEntityPresent(entity) == False
+    assert entity.getLocationID() == -1
