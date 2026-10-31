@@ -80,6 +80,75 @@ def test_setLocations_replaces_the_locations_used_by_lookups():
     assert grid.getLocationByCoordinates(0, 0) == -1
     assert oldLocation.getID() not in grid.getLocations()
 
+def test_setLocations_preserves_columns_and_rows():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = Location(0, 0)
+
+    # execute
+    grid.setLocations({location.getID(): location})
+
+    # verify
+    assert grid.getColumns() == NORMAL_SIZE
+    assert grid.getRows() == NORMAL_SIZE
+    assert grid.getSize() == 1
+
+def test_setColumns_does_not_regenerate_locations():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    grid.setColumns(RECT_COLUMNS)
+
+    # verify
+    assert grid.getColumns() == RECT_COLUMNS
+    assert grid.getSize() == NORMAL_SIZE * NORMAL_SIZE
+    assert grid.getLocationByCoordinates(NORMAL_SIZE - 1, 0) != -1
+
+def test_setRows_does_not_regenerate_locations():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute
+    grid.setRows(RECT_ROWS)
+
+    # verify
+    assert grid.getRows() == RECT_ROWS
+    assert grid.getSize() == NORMAL_SIZE * NORMAL_SIZE
+    assert grid.getLocationByCoordinates(0, NORMAL_SIZE - 1) != -1
+
+def test_setID_applies_only_to_entities_added_afterwards():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    originalID = grid.getID()
+    earlier = Entity("earlier")
+    later = Entity("later")
+    grid.addEntity(earlier)
+
+    # execute
+    grid.setID("new-grid-id")
+    grid.addEntity(later)
+
+    # verify
+    assert earlier.getGridID() == originalID
+    assert later.getGridID() == "new-grid-id"
+    assert grid.isEntityPresent(earlier)
+    assert grid.isEntityPresent(later)
+
+def test_removeEntity_after_setID_clears_grid_id():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntity(entity)
+    grid.setID("new-grid-id")
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert entity.getGridID() == -1
+    assert not grid.isEntityPresent(entity)
+
 # def adding an entity to a specific location
 def test_adding_an_entity_to_a_specific_location():
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
