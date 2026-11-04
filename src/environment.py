@@ -49,13 +49,13 @@ class Environment(object):
     def setGrid(self, grid):
         self.grid = grid
 
-    # Adds an entity to the underlying grid and sets the entity's environment ID only if the grid accepted it.
+    # Adds an entity to the underlying grid and sets the entity's environment ID if the grid holds the entity afterwards.
     def addEntity(self, entity: Entity):
         self.grid.addEntity(entity)
         if self.grid.isEntityPresent(entity):
             entity.setEnvironmentID(self.getID())
 
-    # Adds an entity to a particular location in the underlying grid and sets the entity's environment ID only if the grid accepted it.
+    # Adds an entity to a particular location in the underlying grid and sets the entity's environment ID if the grid holds the entity afterwards.
     def addEntityToLocation(self, entity: Entity, location):
         self.grid.addEntityToLocation(entity, location)
         if self.grid.isEntityPresent(entity):
@@ -72,7 +72,7 @@ class Environment(object):
     def isEntityPresent(self, entity: Entity):
         return self.grid.isEntityPresent(entity)
 
-    # Returns the number of entities in this environment.
+    # Returns the number of entities in this environment, counting an entity once per location that holds it.
     def getNumEntities(self):
         return self.getGrid().getNumEntities()
 

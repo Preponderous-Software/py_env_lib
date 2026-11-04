@@ -780,6 +780,20 @@ def test_getNumEntities_counts_entities_across_locations():
     # verify
     assert numEntities == 3
 
+def test_getNumEntities_counts_an_entity_once_per_location_that_holds_it():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    locations = list(grid.getLocations().values())
+    entity = Entity("test")
+    grid.addEntityToLocation(entity, locations[0])
+    grid.addEntityToLocation(entity, locations[1])
+
+    # execute
+    numEntities = grid.getNumEntities()
+
+    # verify
+    assert numEntities == 2
+
 def test_getLocation():
     # prepare
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)

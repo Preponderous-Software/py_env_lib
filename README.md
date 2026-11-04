@@ -12,7 +12,7 @@ Location | Represents a location that can contain entities.
 Entities exist in locations. Locations exist in grids. Grids exist in environments. Environments serve as the interface for developers to affect the locations and entities within.
 
 ## EnvironmentLib
-This project is based on EnvironmentLib, the repository for which can be found [here](https://github.com/Preponderous-Software/EnvironmentLib).
+This project is based on EnvironmentLib, which has since been renamed to Viron. The repository can be found [here](https://github.com/Preponderous-Software/viron).
 
 ## 📄 License
 

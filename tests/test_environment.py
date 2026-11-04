@@ -190,6 +190,27 @@ def test_addEntityToLocation_rejected_by_grid_preserves_environment_id():
     grid.addEntityToLocation.assert_called_once_with(entity, location)
     assert entity.getEnvironmentID() == -1
 
+def test_addEntity_already_held_by_the_grid_sets_environment_id():
+    environment = Environment("test", 1)
+    entity = Entity("test")
+    environment.getGrid().addEntity(entity)
+
+    environment.addEntity(entity)
+    assert environment.getNumEntities() == 1
+    assert entity.getEnvironmentID() == environment.getID()
+
+def test_addEntityToLocation_not_in_grid_sets_environment_id_of_an_entity_already_held_by_the_grid():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.getGrid().addEntity(entity)
+    placedLocationId = entity.getLocationID()
+    location = Location(NORMAL_SIZE + 1, NORMAL_SIZE + 1)
+
+    environment.addEntityToLocation(entity, location)
+    assert location.isEntityPresent(entity) == False
+    assert entity.getLocationID() == placedLocationId
+    assert entity.getEnvironmentID() == environment.getID()
+
 # test removing entities
 def test_removeEntity_clears_containment_ids():
     environment = Environment("test", NORMAL_SIZE)
