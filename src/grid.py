@@ -45,7 +45,7 @@ class Grid(object):
     def getSize(self):
         return len(self.locations)
     
-    # Returns the number of entities in this grid.
+    # Returns the number of entities in this grid, counting an entity once per location that holds it.
     def getNumEntities(self):
         count = 0
         for locationId in self.locations:
