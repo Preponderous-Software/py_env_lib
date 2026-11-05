@@ -12,7 +12,7 @@ Location | Represents a location that can contain entities.
 Entities exist in locations. Locations exist in grids. Grids exist in environments. Environments serve as the interface for developers to affect the locations and entities within.
 
 ## Usage
-This library is not published as a package. Modules are imported from `src`, so run your code from the repository root or otherwise put the root on the Python path.
+This library is not published as a package. Modules are imported from `src`, so the repository root must be on the Python path, for example by setting `PYTHONPATH` to it.
 
 ```python
 from src.entity import Entity
