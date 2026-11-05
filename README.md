@@ -11,6 +11,45 @@ Location | Represents a location that can contain entities.
 
 Entities exist in locations. Locations exist in grids. Grids exist in environments. Environments serve as the interface for developers to affect the locations and entities within.
 
+## Usage
+This library is not published as a package. Modules are imported from `src`, so the repository root must be on the Python path, for example by setting `PYTHONPATH` to it.
+
+```python
+from src.entity import Entity
+from src.environment import Environment
+
+# An environment of size 3 has a 3x3 grid of locations.
+environment = Environment("Example", 3)
+grid = environment.getGrid()
+
+# Without a location, an entity is placed in a random one.
+wanderer = Entity("Wanderer")
+environment.addEntity(wanderer)
+print(grid.getLocation(wanderer.getLocationID()).getNumEntities())  # 1
+
+# An entity can also be placed in a specific location.
+settler = Entity("Settler")
+center = grid.getLocationByCoordinates(1, 1)
+environment.addEntityToLocation(settler, center)
+print(settler.getLocationID() == center.getID())  # True
+
+# Locations can be navigated from one to the next.
+print(grid.getRight(center).getX())  # 2
+
+environment.removeEntity(wanderer)
+environment.removeEntity(settler)
+print(environment.getNumEntities())  # 0
+```
+
+Not every lookup signals "not found" the same way. `getLocationByCoordinates`, `getUp`, `getRight`, `getDown` and `getLeft` return `-1`, while `getLocation`, `getFirstLocation`, `getRandomLocation` and `getEntity` return `None`.
+
+## Running the tests
+The tests require [pytest](https://docs.pytest.org/). Run them from the repository root:
+
+```bash
+bash run_unit_tests.sh
+```
+
 ## EnvironmentLib
 This project is based on EnvironmentLib, which has since been renamed to Viron. The repository can be found [here](https://github.com/Preponderous-Software/viron).
 
