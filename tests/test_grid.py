@@ -149,6 +149,38 @@ def test_removeEntity_after_setID_clears_grid_id():
     assert entity.getGridID() == -1
     assert not grid.isEntityPresent(entity)
 
+def test_entity_setID_leaves_the_entity_under_its_original_id():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    originalID = entity.getID()
+    grid.addEntity(entity)
+
+    # execute
+    entity.setID("new-entity-id")
+
+    # verify
+    assert grid.isEntityPresent(entity) == False
+    assert grid.getNumEntities() == 1
+    assert grid.getEntity(originalID) is entity
+    assert grid.getEntity("new-entity-id") == None
+
+def test_grid_removeEntity_after_entity_setID_preserves_containment_ids():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntity(entity)
+    locationID = entity.getLocationID()
+    entity.setID("new-entity-id")
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert grid.getNumEntities() == 1
+    assert entity.getGridID() == grid.getID()
+    assert entity.getLocationID() == locationID
+
 # def adding an entity to a specific location
 def test_adding_an_entity_to_a_specific_location():
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
