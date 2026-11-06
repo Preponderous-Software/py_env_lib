@@ -132,13 +132,14 @@ def test_removeEntity_after_setID_clears_environment_id():
     assert entity.getEnvironmentID() == -1
     assert environment.isEntityPresent(entity) == False
 
-def test_removeEntity_after_entity_setID_preserves_containment_ids():
+def test_removeEntity_after_entity_setID_preserves_containment_ids(capsys):
     environment = Environment("test", NORMAL_SIZE)
     entity = Entity("test")
     environment.addEntity(entity)
     entity.setID("new-entity-id")
 
     environment.removeEntity(entity)
+    assert capsys.readouterr().out == ""
     assert environment.getNumEntities() == 1
     assert entity.getEnvironmentID() == environment.getID()
     assert entity.getGridID() == environment.getGrid().getID()
