@@ -84,6 +84,66 @@ def test_addEntity_after_setGrid_uses_the_new_grid():
     assert entity.getGridID() == grid.getID()
     assert entity.getEnvironmentID() == environment.getID()
 
+def test_setGrid_leaves_a_held_entity_in_the_replaced_grid():
+    environment = Environment("test", NORMAL_SIZE)
+    originalGrid = environment.getGrid()
+    entity = Entity("test")
+    environment.addEntity(entity)
+
+    environment.setGrid(Grid(NORMAL_SIZE, NORMAL_SIZE))
+    assert environment.isEntityPresent(entity) == False
+    assert environment.getNumEntities() == 0
+    assert environment.getEntity(entity.getID()) == None
+    assert originalGrid.isEntityPresent(entity) == True
+
+def test_removeEntity_after_setGrid_preserves_containment_ids():
+    environment = Environment("test", NORMAL_SIZE)
+    originalGrid = environment.getGrid()
+    entity = Entity("test")
+    environment.addEntity(entity)
+    environment.setGrid(Grid(NORMAL_SIZE, NORMAL_SIZE))
+
+    environment.removeEntity(entity)
+    assert originalGrid.isEntityPresent(entity) == True
+    assert entity.getEnvironmentID() == environment.getID()
+    assert entity.getGridID() == originalGrid.getID()
+
+def test_setID_applies_only_to_entities_added_afterwards():
+    environment = Environment("test", NORMAL_SIZE)
+    originalID = environment.getID()
+    earlier = Entity("earlier")
+    later = Entity("later")
+    environment.addEntity(earlier)
+
+    environment.setID("new-environment-id")
+    environment.addEntity(later)
+    assert earlier.getEnvironmentID() == originalID
+    assert later.getEnvironmentID() == "new-environment-id"
+    assert environment.isEntityPresent(earlier) == True
+    assert environment.isEntityPresent(later) == True
+
+def test_removeEntity_after_setID_clears_environment_id():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    environment.setID("new-environment-id")
+
+    environment.removeEntity(entity)
+    assert entity.getEnvironmentID() == -1
+    assert environment.isEntityPresent(entity) == False
+
+def test_removeEntity_after_entity_setID_preserves_containment_ids(capsys):
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    entity.setID("new-entity-id")
+
+    environment.removeEntity(entity)
+    assert capsys.readouterr().out == ""
+    assert environment.getNumEntities() == 1
+    assert entity.getEnvironmentID() == environment.getID()
+    assert entity.getGridID() == environment.getGrid().getID()
+
 # test adding entities
 def test_addEntity_sets_containment_ids():
     # prepare

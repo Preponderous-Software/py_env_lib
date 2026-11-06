@@ -275,3 +275,39 @@ def test_removeEntity_from_the_later_location_clears_location_id():
     assert first.isEntityPresent(entity) == True
     assert second.isEntityPresent(entity) == False
     assert entity.getLocationID() == -1
+
+# test changing the ID of an entity held by a location
+def test_entity_setID_leaves_the_entity_under_its_original_id():
+    location = Location(0, 0)
+    entity = Entity("test")
+    originalID = entity.getID()
+    location.addEntity(entity)
+
+    entity.setID("new-entity-id")
+    assert location.isEntityPresent(entity) == False
+    assert location.getNumEntities() == 1
+    assert location.getEntity(originalID) is entity
+    assert location.getEntity("new-entity-id") == None
+
+def test_removeEntity_after_entity_setID_leaves_the_entity_held(capsys):
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    entity.setID("new-entity-id")
+
+    location.removeEntity(entity)
+    assert capsys.readouterr().out == "Warning: An entity was not present when attempting to remove it from a location.\n"
+    assert location.getNumEntities() == 1
+    assert entity.getLocationID() == location.getID()
+
+def test_addEntity_after_entity_setID_holds_the_entity_under_both_ids():
+    location = Location(0, 0)
+    entity = Entity("test")
+    originalID = entity.getID()
+    location.addEntity(entity)
+    entity.setID("new-entity-id")
+
+    location.addEntity(entity)
+    assert location.getNumEntities() == 2
+    assert location.getEntity(originalID) is entity
+    assert location.getEntity("new-entity-id") is entity
