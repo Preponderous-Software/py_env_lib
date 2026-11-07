@@ -41,7 +41,7 @@ class Entity(object):
     def getLocationID(self):
         return self.locationID
     
-    # Sets the ID of this entity.
+    # Sets the ID of this entity. A location that already holds this entity keeps it under its previous ID.
     def setID(self, id):
         self.id = id
 

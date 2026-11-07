@@ -346,6 +346,55 @@ def test_moving_an_entity_between_environments():
     assert entity.getEnvironmentID() == otherEnvironment.getID()
     assert entity.getGridID() == otherEnvironment.getGrid().getID()
 
+def test_addEntity_to_a_second_environment_leaves_it_in_the_first():
+    environment = Environment("test", NORMAL_SIZE)
+    otherEnvironment = Environment("other test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+
+    otherEnvironment.addEntity(entity)
+    assert environment.isEntityPresent(entity) == True
+    assert otherEnvironment.isEntityPresent(entity) == True
+    assert entity.getEnvironmentID() == otherEnvironment.getID()
+    assert entity.getGridID() == otherEnvironment.getGrid().getID()
+
+def test_removeEntity_from_the_earlier_environment_clears_containment_ids():
+    environment = Environment("test", NORMAL_SIZE)
+    otherEnvironment = Environment("other test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    otherEnvironment.addEntity(entity)
+
+    environment.removeEntity(entity)
+    assert environment.isEntityPresent(entity) == False
+    assert otherEnvironment.isEntityPresent(entity) == True
+    assert entity.getEnvironmentID() == -1
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
+def test_removing_through_the_grid_preserves_environment_id():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+
+    environment.getGrid().removeEntity(entity)
+    assert environment.isEntityPresent(entity) == False
+    assert entity.getEnvironmentID() == environment.getID()
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
+def test_removing_through_the_location_preserves_environment_and_grid_ids():
+    environment = Environment("test", NORMAL_SIZE)
+    grid = environment.getGrid()
+    entity = Entity("test")
+    environment.addEntity(entity)
+
+    grid.getLocation(entity.getLocationID()).removeEntity(entity)
+    assert environment.isEntityPresent(entity) == False
+    assert entity.getEnvironmentID() == environment.getID()
+    assert entity.getGridID() == grid.getID()
+    assert entity.getLocationID() == -1
+
 def test_addEntityToLocation_from_another_environments_grid_preserves_containment_ids():
     environment = Environment("test", NORMAL_SIZE)
     otherEnvironment = Environment("other test", NORMAL_SIZE)

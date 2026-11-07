@@ -80,6 +80,17 @@ def test_setLocations_replaces_the_locations_used_by_lookups():
     assert grid.getLocationByCoordinates(0, 0) == -1
     assert oldLocation.getID() not in grid.getLocations()
 
+def test_setLocations_with_an_entity_preserves_containment_ids():
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntity(entity)
+    locationID = entity.getLocationID()
+
+    grid.setLocations(dict())
+    assert grid.isEntityPresent(entity) == False
+    assert entity.getGridID() == grid.getID()
+    assert entity.getLocationID() == locationID
+
 def test_setLocations_preserves_columns_and_rows():
     # prepare
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
