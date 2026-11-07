@@ -65,7 +65,7 @@ class Grid(object):
     def setRows(self, rows):
         self.rows = rows
     
-    # Sets the locations for this grid.
+    # Sets the locations for this grid, leaving the containment IDs of any entities in the replaced locations unchanged.
     def setLocations(self, locations):
         self.locations = locations
     
@@ -73,14 +73,14 @@ class Grid(object):
     def addLocation(self, location: Location):
         self.locations[location.getID()] = location
     
-    # Removes a location from this grid.
+    # Removes a location from this grid, leaving the containment IDs of any entities in it unchanged.
     def removeLocation(self, location: Location):
         if location.getID() not in self.locations:
             print("Warning: A location was not present when attempting to remove it from a grid.")
             return
         del self.locations[location.getID()]
     
-    # Adds an entity to a random location in this grid, unless this grid has no locations.
+    # Adds an entity to a random location in this grid and sets the entity's grid ID, unless this grid has no locations.
     def addEntity(self, entity: Entity):
         if len(self.locations) == 0:
             print("Warning: A grid had no locations when attempting to add an entity to it.")
@@ -88,7 +88,7 @@ class Grid(object):
         entity.setGridID(self.getID())
         self.getRandomLocation().addEntity(entity)
     
-    # Adds an entity to a specified location in this grid, unless that location is not in this grid.
+    # Adds an entity to a specified location in this grid and sets the entity's grid ID, unless that location is not in this grid.
     def addEntityToLocation(self, entity: Entity, location):
         if location.getID() not in self.locations:
             print("Warning: A location was not present when attempting to add an entity to it in a grid.")

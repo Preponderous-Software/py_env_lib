@@ -43,6 +43,24 @@ print(environment.getNumEntities())  # 0
 
 Not every lookup signals "not found" the same way. `getLocationByCoordinates`, `getUp`, `getRight`, `getDown` and `getLeft` return `-1`, while `getLocation`, `getFirstLocation`, `getRandomLocation` and `getEntity` return `None`.
 
+## Containment IDs
+An entity records where it is held through `getEnvironmentID`, `getGridID` and `getLocationID`, each of which returns `-1` when nothing is recorded. Each level only maintains its own ID and those below it. `addEntityToLocation` sets the same IDs as `addEntity`:
+
+Called on | `addEntity` sets | `removeEntity` clears
+----- | ----- | -----
+`Environment` | environment, grid and location IDs | environment, grid and location IDs
+`Grid` | grid and location IDs | grid and location IDs
+`Location` | location ID | location ID
+
+An entity added to an environment should therefore be removed through that environment. Removing it through its grid or location takes it out of the environment but leaves the higher-level IDs set.
+
+The IDs are not kept in step with the following operations. Whether this should change is an open question, so these describe current behaviour rather than a guarantee:
+
+- `Grid.removeLocation` and `Grid.setLocations` leave the IDs of the entities in the discarded locations unchanged ([#69](https://github.com/Preponderous-Software/py_env_lib/issues/69)).
+- `Environment.setGrid` leaves the entities in the replaced grid, with their IDs unchanged. `Environment.removeEntity` then has no effect on them ([#78](https://github.com/Preponderous-Software/py_env_lib/issues/78)).
+- Adding an entity to a second location or environment does not remove it from the first, and both then hold it. Its IDs name the latest one, and removing it from the earlier one still clears the IDs listed in the table above, even though the later one holds it ([#70](https://github.com/Preponderous-Software/py_env_lib/issues/70)).
+- `Entity.setID` does not re-key an entity that is already held. It stays stored under its previous ID, so `isEntityPresent` returns `False` and `removeEntity` cannot remove it ([#77](https://github.com/Preponderous-Software/py_env_lib/issues/77)).
+
 ## Running the tests
 The tests require [pytest](https://docs.pytest.org/). Run them from the repository root:
 

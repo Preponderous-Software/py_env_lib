@@ -45,7 +45,7 @@ class Environment(object):
     def setCreationDate(self, creationDate):
         self.creationDate = creationDate
 
-    # Sets this environment's grid.
+    # Sets this environment's grid, leaving any entities in the replaced grid there with their containment IDs unchanged.
     def setGrid(self, grid):
         self.grid = grid
 

@@ -60,6 +60,15 @@ def test_addEntity(monkeypatch):
     # test that setLocationID was called
     setLocationID.assert_called_once_with(location.getID())
 
+def test_addEntity_sets_only_the_location_id():
+    location = Location(0, 0)
+    entity = Entity("test")
+
+    location.addEntity(entity)
+    assert entity.getLocationID() == location.getID()
+    assert entity.getGridID() == -1
+    assert entity.getEnvironmentID() == -1
+
 # test removing entity
 def test_removeEntity(monkeypatch):
     setLocationID = MagicMock()
