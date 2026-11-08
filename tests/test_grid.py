@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock
+import pytest
 from src.grid import Grid
 from src.location import Location
 from src.entity import Entity
@@ -1174,3 +1175,43 @@ def test_navigating_into_a_removed_location():
 
     # verify
     assert up == -1
+
+# test navigating from a None location
+# The directional methods only guard against -1, so None raises (see #58).
+@pytest.mark.parametrize("direction", ["getUp", "getRight", "getDown", "getLeft"])
+def test_navigating_from_None_raises_attribute_error(direction):
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+
+    # execute and verify
+    with pytest.raises(AttributeError):
+        getattr(grid, direction)(None)
+
+def test_navigating_from_a_missing_location_raises_attribute_error():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    missing = grid.getLocation("missing-location-id")
+
+    # execute and verify
+    assert missing is None
+    with pytest.raises(AttributeError):
+        grid.getUp(missing)
+
+def test_navigating_from_the_random_location_of_an_empty_grid_raises_attribute_error():
+    # prepare
+    grid = Grid(0, 0)
+
+    # execute and verify
+    with pytest.raises(AttributeError):
+        grid.getUp(grid.getRandomLocation())
+
+def test_navigating_off_an_edge_and_on_returns_minus_one():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    corner = grid.getLocationByCoordinates(0, 0)
+
+    # execute
+    offAndOn = grid.getDown(grid.getUp(corner))
+
+    # verify
+    assert offAndOn == -1
