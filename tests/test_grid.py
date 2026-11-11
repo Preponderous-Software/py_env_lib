@@ -984,6 +984,60 @@ def test_grid_removeEntity_not_present_is_silent(capsys):
     # verify
     assert capsys.readouterr().out == ""
 
+# test an entity held by more than one grid
+def test_addEntity_to_a_second_grid_leaves_it_in_the_first():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    otherGrid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntityToLocation(entity, grid.getRandomLocation())
+    otherLocation = otherGrid.getRandomLocation()
+
+    # execute
+    otherGrid.addEntityToLocation(entity, otherLocation)
+
+    # verify
+    assert grid.isEntityPresent(entity) == True
+    assert otherGrid.isEntityPresent(entity) == True
+    assert grid.getEntity(entity.getID()) is entity
+    assert otherGrid.getEntity(entity.getID()) is entity
+    assert entity.getGridID() == otherGrid.getID()
+    assert entity.getLocationID() == otherLocation.getID()
+
+def test_grid_removeEntity_from_the_earlier_grid_clears_containment_ids():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    otherGrid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntityToLocation(entity, grid.getRandomLocation())
+    otherGrid.addEntityToLocation(entity, otherGrid.getRandomLocation())
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert grid.isEntityPresent(entity) == False
+    assert otherGrid.isEntityPresent(entity) == True
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
+def test_grid_removeEntity_from_the_later_grid_clears_containment_ids():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    otherGrid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntityToLocation(entity, grid.getRandomLocation())
+    otherGrid.addEntityToLocation(entity, otherGrid.getRandomLocation())
+
+    # execute
+    otherGrid.removeEntity(entity)
+
+    # verify
+    assert grid.isEntityPresent(entity) == True
+    assert otherGrid.isEntityPresent(entity) == False
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
 # test navigating the grid
 def test_getUp():
     # prepare
