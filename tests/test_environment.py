@@ -499,6 +499,134 @@ def test_getNumEntities_delegates_to_grid():
     assert environment.getNumEntities() == 7
     grid.getNumEntities.assert_called_once_with()
 
+# test warnings when adding, removing and retrieving entities
+def test_addEntity_is_silent(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    # execute
+    environment.addEntity(entity)
+
+    # verify
+    assert capsys.readouterr().out == ""
+
+def test_addEntity_to_an_environment_with_no_locations_warns(capsys):
+    # prepare
+    environment = Environment("empty", 0)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    # execute
+    environment.addEntity(entity)
+
+    # verify
+    assert capsys.readouterr().out == "Warning: A grid had no locations when attempting to add an entity to it.\n"
+
+def test_addEntityToLocation_is_silent(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    location = environment.getGrid().getFirstLocation()
+    capsys.readouterr()
+
+    # execute
+    environment.addEntityToLocation(entity, location)
+
+    # verify
+    assert capsys.readouterr().out == ""
+
+def test_addEntityToLocation_not_in_grid_warns(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    location = Location(NORMAL_SIZE + 1, NORMAL_SIZE + 1)
+    capsys.readouterr()
+
+    # execute
+    environment.addEntityToLocation(entity, location)
+
+    # verify
+    assert capsys.readouterr().out == "Warning: A location was not present when attempting to add an entity to it in a grid.\n"
+
+def test_addEntityToLocation_already_present_warns(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    location = environment.getGrid().getFirstLocation()
+    environment.addEntityToLocation(entity, location)
+    capsys.readouterr()
+
+    # execute
+    environment.addEntityToLocation(entity, location)
+
+    # verify
+    assert capsys.readouterr().out == "Warning: An entity was already present when attempting to add it to a location.\n"
+    assert environment.getNumEntities() == 1
+
+def test_removeEntity_is_silent(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    capsys.readouterr()
+
+    # execute
+    environment.removeEntity(entity)
+
+    # verify
+    assert capsys.readouterr().out == ""
+
+def test_removeEntity_not_present_is_silent(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    # execute
+    environment.removeEntity(entity)
+
+    # verify
+    assert capsys.readouterr().out == ""
+
+def test_isEntityPresent_not_present_is_silent(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    # execute
+    environment.isEntityPresent(entity)
+
+    # verify
+    assert capsys.readouterr().out == ""
+
+def test_getting_entity_by_id_is_silent(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    capsys.readouterr()
+
+    # execute
+    environment.getEntity(entity.getID())
+
+    # verify
+    assert capsys.readouterr().out == ""
+
+def test_getting_entity_by_id_not_present_is_silent(capsys):
+    # prepare
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    capsys.readouterr()
+
+    # execute
+    environment.getEntity(entity.getID())
+
+    # verify
+    assert capsys.readouterr().out == ""
+
 # test printing info
 def test_printInfo_output(capsys):
     # prepare
