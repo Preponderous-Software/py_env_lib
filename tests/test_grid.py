@@ -735,6 +735,75 @@ def test_addLocation_is_reachable_by_coordinates_and_navigation():
     assert grid.getRight(edgeLocation) == location
     assert grid.getLeft(location) == edgeLocation
 
+def test_addLocation_with_an_entity_holds_it_without_setting_its_grid_id():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = Location(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location.addEntity(entity)
+
+    # execute
+    grid.addLocation(location)
+
+    # verify
+    assert grid.isEntityPresent(entity) == True
+    assert grid.getEntity(entity.getID()) == entity
+    assert grid.getNumEntities() == 1
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == location.getID()
+
+def test_addLocation_with_an_entity_from_another_grid_preserves_its_grid_id():
+    # prepare
+    otherGrid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = otherGrid.getRandomLocation()
+    otherGrid.addEntityToLocation(entity, location)
+
+    # execute
+    grid.addLocation(location)
+
+    # verify
+    assert grid.isEntityPresent(entity) == True
+    assert otherGrid.isEntityPresent(entity) == True
+    assert entity.getGridID() == otherGrid.getID()
+    assert entity.getLocationID() == location.getID()
+
+def test_grid_removeEntity_after_addLocation_with_an_entity_clears_containment_ids():
+    # prepare
+    otherGrid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    location = otherGrid.getRandomLocation()
+    otherGrid.addEntityToLocation(entity, location)
+    grid.addLocation(location)
+
+    # execute
+    grid.removeEntity(entity)
+
+    # verify
+    assert grid.isEntityPresent(entity) == False
+    assert otherGrid.isEntityPresent(entity) == False
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
+def test_setLocations_with_a_populated_location_holds_its_entity_without_setting_its_grid_id():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+
+    # execute
+    grid.setLocations({location.getID(): location})
+
+    # verify
+    assert grid.isEntityPresent(entity) == True
+    assert grid.getEntity(entity.getID()) == entity
+    assert grid.getNumEntities() == 1
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == location.getID()
+
 def test_getLocationByCoordinates_after_removing_that_location():
     # prepare
     grid = Grid(RECT_COLUMNS, RECT_ROWS)
