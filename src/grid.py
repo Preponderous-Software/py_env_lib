@@ -65,11 +65,11 @@ class Grid(object):
     def setRows(self, rows):
         self.rows = rows
     
-    # Sets the locations for this grid, leaving the containment IDs of any entities in the replaced locations unchanged.
+    # Sets the locations for this grid, leaving the containment IDs of any entities in the replaced or new locations unchanged.
     def setLocations(self, locations):
         self.locations = locations
     
-    # Adds a location to this grid. 
+    # Adds a location to this grid, leaving the containment IDs of any entities already in it unchanged.
     def addLocation(self, location: Location):
         self.locations[location.getID()] = location
     

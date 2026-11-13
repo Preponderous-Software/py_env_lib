@@ -57,6 +57,7 @@ An entity added to an environment should therefore be removed through that envir
 The IDs are not kept in step with the following operations. Whether this should change is an open question, so these describe current behaviour rather than a guarantee:
 
 - `Grid.removeLocation` and `Grid.setLocations` leave the IDs of the entities in the discarded locations unchanged ([#69](https://github.com/Preponderous-Software/py_env_lib/issues/69)).
+- `Grid.addLocation` and `Grid.setLocations` do not set the grid ID of the entities already in the locations they add. The grid then holds those entities, and `Grid.removeEntity` still clears their grid and location IDs.
 - `Environment.setGrid` leaves the entities in the replaced grid, with their IDs unchanged. `Environment.removeEntity` then has no effect on them ([#78](https://github.com/Preponderous-Software/py_env_lib/issues/78)).
 - Adding an entity to a second location or environment does not remove it from the first, and both then hold it. Its IDs name the latest one, and removing it from the earlier one still clears the IDs listed in the table above, even though the later one holds it ([#70](https://github.com/Preponderous-Software/py_env_lib/issues/70)).
 - `Entity.setID` does not re-key an entity that is already held. It stays stored under its previous ID, so `isEntityPresent` returns `False` and `removeEntity` cannot remove it ([#77](https://github.com/Preponderous-Software/py_env_lib/issues/77)).
