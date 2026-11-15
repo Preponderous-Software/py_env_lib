@@ -320,3 +320,23 @@ def test_addEntity_after_entity_setID_holds_the_entity_under_both_ids():
     assert location.getNumEntities() == 2
     assert location.getEntity(originalID) is entity
     assert location.getEntity("new-entity-id") is entity
+
+# test the dictionary that a location returns
+def test_adding_through_getEntities_holds_the_entity_without_setting_its_location_id():
+    location = Location(0, 0)
+    entity = Entity("test")
+
+    location.getEntities()[entity.getID()] = entity
+    assert location.getNumEntities() == 1
+    assert location.isEntityPresent(entity) == True
+    assert location.getEntity(entity.getID()) is entity
+    assert entity.getLocationID() == -1
+
+def test_removing_through_getEntities_leaves_the_location_id_set():
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+
+    del location.getEntities()[entity.getID()]
+    assert location.isEntityPresent(entity) == False
+    assert entity.getLocationID() == location.getID()

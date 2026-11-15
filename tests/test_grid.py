@@ -1338,3 +1338,72 @@ def test_navigating_off_an_edge_and_on_returns_minus_one():
 
     # verify
     assert offAndOn == -1
+
+# test locations that share coordinates
+def test_addLocation_with_the_coordinates_of_an_existing_location_keeps_both():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    original = grid.getLocationByCoordinates(0, 0)
+    duplicate = Location(0, 0)
+    sizeBefore = grid.getSize()
+
+    # execute
+    grid.addLocation(duplicate)
+
+    # verify
+    assert grid.getSize() == sizeBefore + 1
+    assert grid.getLocation(original.getID()) is original
+    assert grid.getLocation(duplicate.getID()) is duplicate
+
+def test_getLocationByCoordinates_shared_by_two_locations_returns_the_earlier_one():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    original = grid.getLocationByCoordinates(0, 0)
+    duplicate = Location(0, 0)
+
+    # execute
+    grid.addLocation(duplicate)
+
+    # verify
+    assert grid.getLocationByCoordinates(0, 0) is original
+
+def test_getLocationByCoordinates_shared_by_two_locations_returns_the_later_one_once_the_earlier_is_removed():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    original = grid.getLocationByCoordinates(0, 0)
+    duplicate = Location(0, 0)
+    grid.addLocation(duplicate)
+
+    # execute
+    grid.removeLocation(original)
+
+    # verify
+    assert grid.getLocationByCoordinates(0, 0) is duplicate
+
+# test the dictionaries that a grid returns and stores
+def test_getLocations_returns_the_grids_own_dictionary():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getLocationByCoordinates(0, 0)
+
+    # execute
+    del grid.getLocations()[location.getID()]
+
+    # verify
+    assert grid.getSize() == NORMAL_SIZE * NORMAL_SIZE - 1
+    assert grid.getLocationByCoordinates(0, 0) == -1
+
+def test_setLocations_stores_the_given_dictionary_without_copying_it():
+    # prepare
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    locations = dict()
+    grid.setLocations(locations)
+    location = Location(0, 0)
+
+    # execute
+    locations[location.getID()] = location
+
+    # verify
+    assert grid.getLocations() is locations
+    assert grid.getSize() == 1
+    assert grid.getLocationByCoordinates(0, 0) is location
