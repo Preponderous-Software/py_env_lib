@@ -43,6 +43,51 @@ def test_generateLocations_rectangular_coordinates():
             expected.add((x, y))
     assert coordinates == expected
 
+def test_generateLocations_orders_locations_by_column_then_row():
+    # prepare
+    grid = Grid(2, 2)
+
+    # execute
+    coordinates = [(location.getX(), location.getY()) for location in grid.getLocations().values()]
+
+    # verify
+    assert coordinates == [(0, 0), (0, 1), (1, 0), (1, 1)]
+
+# test grids with an empty or negative dimension
+# The constructor does not validate its arguments; a dimension of zero or less yields no locations.
+@pytest.mark.parametrize("columns, rows", [(RECT_COLUMNS, 0), (0, RECT_ROWS)])
+def test_initialization_with_one_empty_dimension_has_no_locations(columns, rows):
+    # execute
+    grid = Grid(columns, rows)
+
+    # verify
+    assert grid.getSize() == 0
+    assert grid.getColumns() == columns
+    assert grid.getRows() == rows
+
+@pytest.mark.parametrize("columns, rows", [(-1, RECT_ROWS), (RECT_COLUMNS, -2)])
+def test_initialization_with_a_negative_dimension_keeps_it_and_has_no_locations(columns, rows):
+    # execute
+    grid = Grid(columns, rows)
+
+    # verify
+    assert grid.getSize() == 0
+    assert grid.getColumns() == columns
+    assert grid.getRows() == rows
+
+def test_adding_an_entity_to_a_grid_with_one_empty_dimension_preserves_containment_ids():
+    # prepare
+    grid = Grid(RECT_COLUMNS, 0)
+    entity = Entity("test")
+
+    # execute
+    grid.addEntity(entity)
+
+    # verify
+    assert grid.getNumEntities() == 0
+    assert entity.getGridID() == -1
+    assert entity.getLocationID() == -1
+
 # test getters
 def test_getters():    
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
@@ -644,6 +689,41 @@ def test_getFirstLocation_is_silent(capsys):
     # verify
     assert location != None
     assert capsys.readouterr().out == ""
+
+def test_getFirstLocation_of_a_new_grid_is_at_the_origin():
+    # prepare
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+
+    # execute
+    location = grid.getFirstLocation()
+
+    # verify
+    assert location.getX() == 0
+    assert location.getY() == 0
+
+def test_getFirstLocation_after_removing_the_first_is_the_next_in_column_order():
+    # prepare
+    grid = Grid(RECT_COLUMNS, RECT_ROWS)
+    grid.removeLocation(grid.getFirstLocation())
+
+    # execute
+    location = grid.getFirstLocation()
+
+    # verify
+    assert location.getX() == 0
+    assert location.getY() == 1
+
+def test_getFirstLocation_of_an_empty_grid_after_addLocation_is_the_added_location():
+    # prepare
+    grid = Grid(0, 0)
+    location = Location(RECT_COLUMNS, RECT_ROWS)
+    grid.addLocation(location)
+
+    # execute
+    firstLocation = grid.getFirstLocation()
+
+    # verify
+    assert firstLocation is location
 
 def test_removeLocation():
     # prepare
@@ -1338,6 +1418,18 @@ def test_navigating_off_an_edge_and_on_returns_minus_one():
 
     # verify
     assert offAndOn == -1
+
+@pytest.mark.parametrize("direction", ["getUp", "getRight", "getDown", "getLeft"])
+def test_navigating_from_the_only_location_of_a_single_location_grid_returns_minus_one(direction):
+    # prepare
+    grid = Grid(1, 1)
+    location = grid.getFirstLocation()
+
+    # execute
+    neighbour = getattr(grid, direction)(location)
+
+    # verify
+    assert neighbour == -1
 
 # test locations that share coordinates
 def test_addLocation_with_the_coordinates_of_an_existing_location_keeps_both():
