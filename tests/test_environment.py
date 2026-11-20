@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from unittest.mock import MagicMock
 from src.environment import Environment
 from src.grid import Grid
@@ -668,3 +669,23 @@ def test_printInfo_output_reflects_a_real_grid(capsys):
     assert "Num entities:  1\n" in output
     assert "Num locations:  " + str(NORMAL_SIZE * NORMAL_SIZE) + "\n" in output
     assert "Grid ID:  " + str(environment.getGrid().getID()) + "\n" in output
+
+# test the IDs an environment assigns and looks up by
+def test_initialization_assigns_a_uuid():
+    environment = Environment("test", NORMAL_SIZE)
+    assert isinstance(environment.getID(), uuid.UUID)
+
+def test_getting_entity_by_the_string_form_of_its_id_returns_None():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    assert environment.getEntity(str(entity.getID())) == None
+    assert environment.getEntity(entity.getID()) is entity
+
+def test_addEntity_sets_containment_ids_to_uuids():
+    environment = Environment("test", NORMAL_SIZE)
+    entity = Entity("test")
+    environment.addEntity(entity)
+    assert isinstance(entity.getEnvironmentID(), uuid.UUID)
+    assert isinstance(entity.getGridID(), uuid.UUID)
+    assert isinstance(entity.getLocationID(), uuid.UUID)
