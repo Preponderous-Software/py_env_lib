@@ -38,6 +38,10 @@ def test_initialization_assigns_distinct_ids():
     assert environment.getID() != otherEnvironment.getID()
     assert environment.getGrid().getID() != otherEnvironment.getGrid().getID()
 
+def test_initialization_assigns_a_uuid():
+    environment = Environment("test", NORMAL_SIZE)
+    assert isinstance(environment.getID(), uuid.UUID)
+
 def test_initialization_records_creation_date_as_datetime():
     before = datetime.datetime.now()
     environment = Environment("test", NORMAL_SIZE)
@@ -670,11 +674,7 @@ def test_printInfo_output_reflects_a_real_grid(capsys):
     assert "Num locations:  " + str(NORMAL_SIZE * NORMAL_SIZE) + "\n" in output
     assert "Grid ID:  " + str(environment.getGrid().getID()) + "\n" in output
 
-# test the IDs an environment assigns and looks up by
-def test_initialization_assigns_a_uuid():
-    environment = Environment("test", NORMAL_SIZE)
-    assert isinstance(environment.getID(), uuid.UUID)
-
+# test the IDs an environment looks up by and records
 def test_getting_entity_by_the_string_form_of_its_id_returns_None():
     environment = Environment("test", NORMAL_SIZE)
     entity = Entity("test")

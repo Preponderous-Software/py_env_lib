@@ -33,6 +33,10 @@ def test_initialization_rectangular():
     assert grid.getRows() == RECT_ROWS
     assert grid.getSize() == RECT_COLUMNS * RECT_ROWS
 
+def test_initialization_assigns_a_uuid():
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    assert isinstance(grid.getID(), uuid.UUID)
+
 def test_generateLocations_rectangular_coordinates():
     grid = Grid(RECT_COLUMNS, RECT_ROWS)
     coordinates = set()
@@ -1501,11 +1505,7 @@ def test_setLocations_stores_the_given_dictionary_without_copying_it():
     assert grid.getSize() == 1
     assert grid.getLocationByCoordinates(0, 0) is location
 
-# test the IDs a grid assigns and looks up by
-def test_initialization_assigns_a_uuid():
-    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
-    assert isinstance(grid.getID(), uuid.UUID)
-
+# test the IDs a grid looks up by
 def test_getLocations_is_keyed_by_location_uuid():
     grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
     for locationId, location in grid.getLocations().items():
