@@ -1,3 +1,4 @@
+import uuid
 from unittest.mock import MagicMock
 from src.location import Location
 from src.entity import Entity
@@ -17,6 +18,10 @@ def test_initialization_assigns_distinct_ids():
     first = Location(0, 0)
     second = Location(0, 0)
     assert first.getID() != second.getID()
+
+def test_initialization_assigns_a_uuid():
+    location = Location(0, 0)
+    assert isinstance(location.getID(), uuid.UUID)
 
 # test getters
 def test_getters():
@@ -340,3 +345,21 @@ def test_removing_through_getEntities_leaves_the_location_id_set():
     del location.getEntities()[entity.getID()]
     assert location.isEntityPresent(entity) == False
     assert entity.getLocationID() == location.getID()
+
+# test looking up an entity by the string form of its ID
+def test_getEntityById_with_the_string_form_of_the_id_returns_None(capsys):
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    capsys.readouterr()
+
+    assert location.getEntity(str(entity.getID())) == None
+    assert capsys.readouterr().out == "Warning: An entity was not present when attempting to retrieve it from a location.\n"
+    assert location.getEntity(entity.getID()) is entity
+
+def test_addEntity_sets_the_location_id_to_the_locations_uuid_not_its_string_form():
+    location = Location(0, 0)
+    entity = Entity("test")
+    location.addEntity(entity)
+    assert isinstance(entity.getLocationID(), uuid.UUID)
+    assert entity.getLocationID() != str(location.getID())

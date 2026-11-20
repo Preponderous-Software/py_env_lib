@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from unittest.mock import MagicMock
 from src.entity import Entity
 
@@ -16,6 +17,10 @@ def test_initialization_assigns_distinct_ids():
     entity = Entity("test")
     otherEntity = Entity("test")
     assert entity.getID() != otherEntity.getID()
+
+def test_initialization_assigns_a_uuid():
+    entity = Entity("test")
+    assert isinstance(entity.getID(), uuid.UUID)
 
 def test_initialization_records_creation_date_as_datetime():
     before = datetime.datetime.now()

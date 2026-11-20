@@ -43,6 +43,8 @@ print(environment.getNumEntities())  # 0
 
 Not every lookup signals "not found" the same way. `getLocationByCoordinates`, `getUp`, `getRight`, `getDown` and `getLeft` return `-1`, while `getLocation`, `getFirstLocation`, `getRandomLocation` and `getEntity` return `None`.
 
+Entities, locations, grids and environments are given a `uuid.UUID` as their ID when they are created. `getLocation` and `getEntity` look IDs up as given, so the string form of an ID, such as `str(entity.getID())`, finds nothing and returns `None`.
+
 ## Containment IDs
 An entity records where it is held through `getEnvironmentID`, `getGridID` and `getLocationID`, each of which returns `-1` when nothing is recorded. Each level only maintains its own ID and those below it. `addEntityToLocation` sets the same IDs as `addEntity`:
 

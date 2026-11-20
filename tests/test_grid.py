@@ -1,3 +1,4 @@
+import uuid
 from unittest.mock import MagicMock
 import pytest
 from src.grid import Grid
@@ -31,6 +32,10 @@ def test_initialization_rectangular():
     assert grid.getColumns() == RECT_COLUMNS
     assert grid.getRows() == RECT_ROWS
     assert grid.getSize() == RECT_COLUMNS * RECT_ROWS
+
+def test_initialization_assigns_a_uuid():
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    assert isinstance(grid.getID(), uuid.UUID)
 
 def test_generateLocations_rectangular_coordinates():
     grid = Grid(RECT_COLUMNS, RECT_ROWS)
@@ -1499,3 +1504,29 @@ def test_setLocations_stores_the_given_dictionary_without_copying_it():
     assert grid.getLocations() is locations
     assert grid.getSize() == 1
     assert grid.getLocationByCoordinates(0, 0) is location
+
+# test the IDs a grid looks up by
+def test_getLocations_is_keyed_by_location_uuid():
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    for locationId, location in grid.getLocations().items():
+        assert isinstance(locationId, uuid.UUID)
+        assert locationId == location.getID()
+
+def test_getLocation_with_the_string_form_of_the_id_returns_None(capsys):
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    location = grid.getFirstLocation()
+    capsys.readouterr()
+
+    assert grid.getLocation(str(location.getID())) == None
+    assert capsys.readouterr().out == "Warning: A location was not present when attempting to retrieve it from a grid.\n"
+    assert grid.getLocation(location.getID()) is location
+
+def test_retrieving_entity_by_the_string_form_of_its_id_returns_None(capsys):
+    grid = Grid(NORMAL_SIZE, NORMAL_SIZE)
+    entity = Entity("test")
+    grid.addEntity(entity)
+    capsys.readouterr()
+
+    assert grid.getEntity(str(entity.getID())) == None
+    assert capsys.readouterr().out == ""
+    assert grid.getEntity(entity.getID()) is entity
